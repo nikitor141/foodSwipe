@@ -1,0 +1,55 @@
+@use 'reset';
+@use 'variables' as *;
+@use 'functions' as f;
+@use 'mixins' as m;
+@use 'colors';
+
+//	snippets -----------------------------------------------
+// fsc - fullscreen;
+// brg - burger;
+// brg-2 - burger animated;
+// modal - modal by dialog
+//---------------------------------------------------------
+
+//scss  ---------------------------------------------------
+
+//global ---------------------------------------------------
+
+img,
+svg,
+video {
+	width: 100%;
+	max-width: 100%;
+	height: auto;
+	max-height: 100%;
+}
+
+html {
+	--refRes: 1920;
+	$ratio: 0.5;
+	scroll-behavior: smooth;
+	font-size: calc(100vw / var(--refRes) * 10);
+	// accent-color: $cl-accent;
+
+	@media (min-width: 1921px) {
+		font-size: calc(10px + ($ratio * 10) * ((100vw - var(--refRes) * 1px) / var(--refRes)));
+	}
+
+	@include m.adaptive(tablet) {
+		--refRes: 768;
+	}
+	@include m.adaptive(mobile) {
+		--refRes: 320;
+	}
+}
+
+body {
+	// font-family: $font;
+	font-size: $fs;
+	// color: cl('text');
+
+	&.active {
+		position: fixed;
+		overflow: hidden;
+	}
+}

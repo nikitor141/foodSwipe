@@ -1,0 +1,25 @@
+@use 'mixins' as m;
+@use 'sass:map';
+@use 'variables' as *;
+
+$themes: (
+	light: (
+		_scheme: light,
+		primary: $cl-primary--light,
+		secondary: $cl-secondary--light
+	),
+	dark: (
+		_scheme: dark,
+		primary: $cl-primary--dark,
+		secondary: $cl-secondary--dark
+	)
+);
+
+:root {
+	@each $key, $value in $themes {
+		&[data-theme='#{$key}'] {
+			color-scheme: map.get($value, _scheme);
+			@include m.themeToVars($value);
+		}
+	}
+}

@@ -1,0 +1,22 @@
+@use 'functions' as f;
+
+$font: 'Roboto', sans-serif;
+$fs: f.rem(14);
+
+// colors
+$cl-blue-500: #00a;
+$cl-red-500: #a00;
+
+$cl-blue-100: #00f;
+$cl-red-100: #f00;
+
+//themes
+$cl-primary--light: $cl-blue-500;
+$cl-secondary--light: $cl-red-500;
+
+$cl-primary--dark: $cl-blue-100;
+$cl-secondary--dark: $cl-red-100;
+
+//colors in dev
+$cd-primary: f.cl('primary');
+$cd-secondary: f.cl('secondary');

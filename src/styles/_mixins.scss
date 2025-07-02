@@ -1,0 +1,52 @@
+@use 'sass:map';
+
+@mixin themeToVars($theme) {
+	@each $key, $value in $theme {
+		@if $key != '_scheme' {
+			--color-#{$key}: #{$value};
+		}
+	}
+}
+
+$devices: (
+	tabletReset: 'width > 1024px',
+	tablet: '1024px >= width',
+	tabletOnly: '1024px >= width > 530px',
+	mobileReset: 'width > 530px',
+	mobile: '530px >= width'
+);
+@mixin adaptive($device) {
+	@media (map.get($devices, $device)) {
+		@content;
+	}
+}
+
+/*
+	@mixin adaptive($device) {
+		@if $device == tabletReset {
+			@media (width > 1024px) {
+				@content;
+			}
+		}
+		@if $device == tablet {
+			@media (1024px >= width) {
+				@content;
+			}
+		}
+		@if $device == tabletOnly {
+			@media (1024px >= width > 530px) {
+				@content;
+			}
+		}
+		@if $device == mobileReset {
+			@media (width > 530px) {
+				@content;
+			}
+		}
+		@if $device == mobile {
+			@media (530px >= width) {
+				@content;
+			}
+		}
+	}
+*/
