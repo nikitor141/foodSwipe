@@ -1,10 +1,11 @@
 @use 'sass:string';
 
 @function cl($name, $opacity: 1) {
+	$name: string.unquote($name);
 	@if $opacity < 1 {
-		@return color-mix(in srgb, transparent #{100% - $opacity * 100%}, var(--color-#{string.unquote($name)}));
+		@return color-mix(in srgb, transparent #{100% - $opacity * 100%}, var(--color-#{$name}));
 	} @else {
-		@return var(--color-#{string.unquote($name)});
+		@return var(--color-#{$name});
 	}
 }
 
