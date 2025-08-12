@@ -53,3 +53,55 @@ body {
 		overflow: hidden;
 	}
 }
+
+.buttons {
+	font-size: f.rem(44);
+	button {
+		padding: 0.5em 1.25em;
+	}
+	&__no {
+		border: f.rem(2) solid darkred;
+		background-color: red;
+		color: darkred;
+	}
+	&__yes {
+		border: f.rem(2) solid green;
+		background-color: greenyellow;
+		color: green;
+	}
+}
+.wrapper {
+	height: 50%;
+	a {
+		height: 70%;
+		display: block;
+	}
+	img {
+		object-fit: contain;
+	}
+	h2 {
+		font-size: f.rem(24);
+	}
+}
+.category {
+	width: fit-content;
+	padding: 0.5em 1.5em;
+	border-radius: 0.5em;
+	font-size: f.rem(10);
+	border: f.rem(2) solid green;
+	background-color: greenyellow;
+	color: green;
+}
+.subcategory {
+	width: fit-content;
+	padding: 0.5em 1.5em;
+	border-radius: 0.5em;
+	font-size: f.rem(12);
+	border: f.rem(2) solid midnightblue;
+	background-color: royalblue;
+	color: midnightblue;
+}
+.price {
+	font-size: f.rem(24);
+	font-weight: bold;
+}
