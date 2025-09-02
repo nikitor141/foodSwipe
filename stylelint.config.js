@@ -1,0 +1,8 @@
+/** @type {import('stylelint').Config} */
+export default {
+	extends: ['stylelint-config-recommended-scss', 'stylelint-config-recess-order'],
+	rules: {
+		'block-no-empty': null,
+		'no-descending-specificity': null
+	}
+}

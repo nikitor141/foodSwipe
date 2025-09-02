@@ -1,3 +1,4 @@
+import { Singleton } from '@utils/singleton'
 import { PRODUCT_BY_ID_URL, RANDOM_PRODUCT_URL, SERVER_URL } from '@/config/url.config'
 
 interface Product {
@@ -19,9 +20,14 @@ interface Excluded {
 type RandomProductsArgs = { count: number; excluded: Excluded }
 type ProductByIdArgs = { id: number }
 
-export class ProductsService {
+export class ProductsService extends Singleton {
+	protected constructor() {
+		super()
+	}
+
 	#randomFetcher = new RandomProductsFetcher()
 	#byIdFetcher = new ProductByIdFetcher()
+
 	async getRandomProducts(count: number, excluded: Excluded): Promise<Product[]> {
 		return await this.#randomFetcher.fetchData({ count, excluded })
 	}

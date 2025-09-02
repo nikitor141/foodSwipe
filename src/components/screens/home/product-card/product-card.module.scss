@@ -1,0 +1,122 @@
+@use '@/styles/functions' as f;
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as m;
+
+@property --card-gradient-positive-opacity {
+	syntax: '<number>';
+	inherits: false;
+	initial-value: 0.1;
+}
+@property --card-gradient-negative-opacity {
+	syntax: '<number>';
+	inherits: false;
+	initial-value: 0.1;
+}
+@property --card-gradient-positive-end {
+	syntax: '<percentage>';
+	inherits: false;
+	initial-value: 60%;
+}
+@property --card-gradient-negative-end {
+	syntax: '<percentage>';
+	inherits: false;
+	initial-value: 80%;
+}
+.product-card {
+	--card-gradient-positive-opacity: 0.1;
+	--card-gradient-negative-opacity: 0.1;
+	--card-gradient-positive-end: 60%;
+	--card-gradient-negative-end: 80%;
+
+	$border-width: f.rem(1);
+	display: flex;
+	flex-direction: column;
+	padding: f.rem(35) f.rem(29);
+	width: f.rem(320);
+	border-radius: f.rem(40);
+	line-height: 1.2;
+	transition:
+		--card-gradient-positive-opacity 0.4s,
+		--card-gradient-negative-opacity 0.4s,
+		--card-gradient-positive-end 0.4s,
+		--card-gradient-negative-end 0.4s;
+	background:
+		radial-gradient(
+			ellipse at 25% 38%,
+			f.cl($cd-positive, var(--card-gradient-positive-opacity)) 10%,
+			transparent var(--card-gradient-positive-end)
+		),
+		radial-gradient(
+			ellipse at 75% 55%,
+			f.cl($cd-negative, var(--card-gradient-negative-opacity)) 30%,
+			transparent var(--card-gradient-negative-end)
+		),
+		f.cl($cd-glass-background, 0.25);
+
+	position: relative;
+	backdrop-filter: $blur;
+
+	@include m.glassyBorder($border-width, f.cl($cd-glass-border, 0.25), f.cl($cd-glass-border, 0.05));
+
+	&.negative {
+		--card-gradient-positive-opacity: 0;
+		--card-gradient-negative-opacity: 0.4;
+		--card-gradient-negative-end: 100%;
+	}
+	&.positive {
+		--card-gradient-negative-opacity: 0;
+		--card-gradient-positive-opacity: 0.4;
+		--card-gradient-positive-end: 100%;
+	}
+
+	&__tag {
+		text-wrap: nowrap;
+		height: f.rem(25);
+		display: flex;
+		align-items: center;
+		color: f.cl($cd-small-text, 0.6);
+		font-size: f.rem(12);
+		margin-bottom: f.rem(14.5);
+
+		&-category {
+		}
+		svg {
+			flex-shrink: 0;
+			width: 1em;
+			height: 1em;
+		}
+		&-subcategory {
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+	}
+	&__image {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: f.rem(200);
+		margin-bottom: f.rem(14.5);
+		background-color: white;
+		border-radius: f.rem(20);
+		padding: f.rem(10);
+
+		img {
+			width: auto;
+		}
+	}
+	&__price {
+		color: f.cl($cd-accent);
+		font-size: f.rem(27);
+		font-weight: 600;
+		sup {
+			font-size: f.rem(16);
+		}
+	}
+	&__name {
+		margin-bottom: f.rem(14.5);
+		font-size: f.rem(24);
+		font-weight: bold;
+		overflow: hidden;
+		height: f.rem(24 * 3 * 1.2);
+	}
+}

@@ -5,13 +5,25 @@
 $themes: (
 	light: (
 		_scheme: light,
-		primary: $cl-primary--light,
-		secondary: $cl-secondary--light
+		positive: $cl-positive--light,
+		negative: $cl-negative--light,
+		accent: $cl-accent--light,
+		text: $cl-text--light,
+		small-text: $cl-small-text--light,
+		background: $cl-background--light,
+		glass-background: $cl-glass-background--light,
+		glass-border: $cl-glass-border--light
 	),
 	dark: (
 		_scheme: dark,
-		primary: $cl-primary--dark,
-		secondary: $cl-secondary--dark
+		positive: $cl-positive--dark,
+		negative: $cl-negative--dark,
+		accent: $cl-accent--dark,
+		text: $cl-text--dark,
+		small-text: $cl-small-text--dark,
+		background: $cl-background--dark,
+		glass-background: $cl-glass-background--dark,
+		glass-border: $cl-glass-border--dark
 	)
 );
 

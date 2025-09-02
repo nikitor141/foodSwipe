@@ -1,12 +1,16 @@
 @use 'sass:string';
+@use 'sass:meta';
 
 @function cl($name, $opacity: 1) {
 	$name: string.unquote($name);
-	@if $opacity < 1 {
-		@return color-mix(in srgb, transparent #{100% - $opacity * 100%}, var(--color-#{$name}));
-	} @else {
-		@return var(--color-#{$name});
+	@if meta.type-of($opacity) == 'number' {
+		@if $opacity < 1 {
+			@return color-mix(in srgb, transparent #{100% - $opacity * 100%}, var(--color-#{$name}));
+		} @else {
+			@return var(--color-#{$name});
+		}
 	}
+	@return color-mix(in srgb, transparent calc(100% - (#{$opacity} * 100%)), var(--color-#{$name}));
 }
 
 @function rem($pixels) {

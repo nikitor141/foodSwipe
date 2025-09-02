@@ -1,3 +1,5 @@
+@use '@/styles/functions' as f;
+@use '@/styles/variables' as *;
 //flex layout ---------------------------------------------
 
 .layout {
@@ -9,24 +11,6 @@
 	overflow-wrap: break-word;
 }
 
-//grid layout --------------------------------------
-
-.layout {
-	position: relative;
-	overflow: hidden; // не будет работать sticky
-	overflow-wrap: break-word;
-	min-height: 100%;
-
-	display: grid;
-
-	// grid-template-areas:
-	// 	"h h"
-	// 	"a c"
-	// 	"f f"
-	// 	/1fr 2fr;
-	grid-template-rows: minmax(f.rem(N), auto) 1fr minmax(f.rem(N), auto);
-}
-
 // common -------------------------------------------------
 
 .container {
@@ -35,42 +19,6 @@
 	max-width: f.rem(1130); //ширина контентной части
 	padding: 0 f.rem(15); // плюсуешь 2x padding к контентной части
 	margin: 0 auto;
-}
-
-//grid container (wrapper>section.grid-container>section__body)---------------------------
-
-.grid-container {
-	position: relative;
-	min-height: 100%;
-	overflow: hidden; // не будет работать sticky
-	overflow-wrap: break-word;
-
-	--padding-inline: rem(15);
-	--content-max-width: rem(1100);
-	-breakout-max-width: f.rem(1300);
-
-	-breakout-size: calc((var(--breakout-max-width) - var(--content-max-width)) / 2);
-
-	display: grid;
-	grid-template-columns:
-		[full-width-start] minmax(var(--padding-inline), 1fr)
-		[breakout-start] minmax(0, var(--breakout-size))
-		[content-start] min(100% - (var(--padding-inline) * 2), var(--content-max-width)) [content-end]
-		minmax(0, var(--breakout-size)) [breakout-end]
-		minmax(var(--padding-inline), 1fr) [full-width-end];
-	& > :not(.breakout, .full-width),
-	.full-width > :not(.breakout, .full-width) {
-		grid-column: content;
-	}
-	& > .breakout {
-		grid-column: breakout;
-	}
-	& > .full-width {
-		grid-column: full-width;
-
-		display: grid;
-		grid-template-columns: inherit;
-	}
 }
 
 //flex main -----------------------------------------------

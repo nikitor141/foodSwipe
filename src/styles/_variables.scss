@@ -1,22 +1,50 @@
 @use 'functions' as f;
 
-$font: 'Roboto', sans-serif;
+$font: 'Inter', system-ui, sans-serif;
 $fs: f.rem(14);
+$blur: blur(f.rem(12));
 
 // colors
-$cl-blue-500: #00a;
-$cl-red-500: #a00;
-
-$cl-blue-100: #00f;
-$cl-red-100: #f00;
+$cl-red: #e80707;
+$cl-erin: #05f140ff;
+$cl-blue: #4299e1;
+$cl-spring-green: #4aff85;
+$cl-seasalt: #fbfaf8ff;
+$cl-white-smoke: #f0ede9;
+$cl-bone: #e7decdff;
+$cl-dark-gray: #b0a9a2;
+$cl-bole: #5e5e5e;
+$cl-black: #21201f;
+$cl-black-600: #181716;
+$cl-black-400: #242322;
+$cl-dark-slate-gray: #2f2e2d;
+$cl-white: #ffffff;
 
 //themes
-$cl-primary--light: $cl-blue-500;
-$cl-secondary--light: $cl-red-500;
+$cl-positive--light: $cl-erin;
+$cl-negative--light: $cl-red;
+$cl-accent--light: $cl-blue;
+$cl-text--light: $cl-black;
+$cl-small-text--light: $cl-bole;
+$cl-background--light: $cl-bone;
+$cl-glass-background--light: $cl-white;
+$cl-glass-border--light: $cl-white;
 
-$cl-primary--dark: $cl-blue-100;
-$cl-secondary--dark: $cl-red-100;
+$cl-positive--dark: $cl-spring-green;
+$cl-negative--dark: $cl-red;
+$cl-accent--dark: $cl-blue;
+$cl-text--dark: $cl-white-smoke;
+$cl-small-text--dark: $cl-dark-gray;
+$cl-background--dark: $cl-black-600;
+$cl-glass-background--dark: $cl-black-400;
+$cl-glass-border--dark: $cl-dark-slate-gray;
 
 //colors in dev
-$cd-primary: f.cl('primary');
-$cd-secondary: f.cl('secondary');
+$cd-positive: 'positive';
+$cd-negative: 'negative';
+$cd-accent: 'accent';
+$cd-text: 'text';
+$cd-small-text: 'small-text';
+$cd-background: 'background';
+$cd-glass-background: 'glass-background';
+$cd-glass-border: 'glass-border';

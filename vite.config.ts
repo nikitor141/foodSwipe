@@ -8,7 +8,10 @@ export default defineConfig(() => {
 	return {
 		resolve: {
 			alias: {
-				'@': path.resolve('/src')
+				'@': path.resolve('/src'),
+				'@components': path.resolve('src/components'),
+				'@utils': path.resolve('src/utils'),
+				'@core': path.resolve('src/core')
 			}
 		},
 		plugins: [imagetools(), webfontDownload()],

@@ -29,7 +29,8 @@ html {
 	$ratio: 0.5;
 	scroll-behavior: smooth;
 	font-size: calc(100vw / var(--refRes) * 10);
-	// accent-color: $cl-accent;
+	accent-color: f.cl($cd-accent);
+	overscroll-behavior: none;
 
 	@media (min-width: 1921px) {
 		font-size: calc(10px + ($ratio * 10) * ((100vw - var(--refRes) * 1px) / var(--refRes)));
@@ -44,64 +45,28 @@ html {
 }
 
 body {
-	// font-family: $font;
+	font-family: $font;
 	font-size: $fs;
-	// color: cl('text');
+	color: f.cl($cd-text);
+	background-color: f.cl($cd-background);
+	touch-action: manipulation;
+
+	&::before {
+		content: '';
+		inset: 0;
+		position: absolute;
+		background: url('@/assets/img/background/god-rays.png') top left / cover;
+		z-index: -1;
+	}
+	&.positive::before {
+		filter: saturate(5) hue-rotate(250deg);
+	}
+	&.negative::before {
+		filter: saturate(5) hue-rotate(110deg);
+	}
 
 	&.active {
 		position: fixed;
 		overflow: hidden;
 	}
-}
-
-.buttons {
-	font-size: f.rem(44);
-	button {
-		padding: 0.5em 1.25em;
-	}
-	&__no {
-		border: f.rem(2) solid darkred;
-		background-color: red;
-		color: darkred;
-	}
-	&__yes {
-		border: f.rem(2) solid green;
-		background-color: greenyellow;
-		color: green;
-	}
-}
-.wrapper {
-	height: 50%;
-	a {
-		height: 70%;
-		display: block;
-	}
-	img {
-		object-fit: contain;
-	}
-	h2 {
-		font-size: f.rem(24);
-	}
-}
-.category {
-	width: fit-content;
-	padding: 0.5em 1.5em;
-	border-radius: 0.5em;
-	font-size: f.rem(10);
-	border: f.rem(2) solid green;
-	background-color: greenyellow;
-	color: green;
-}
-.subcategory {
-	width: fit-content;
-	padding: 0.5em 1.5em;
-	border-radius: 0.5em;
-	font-size: f.rem(12);
-	border: f.rem(2) solid midnightblue;
-	background-color: royalblue;
-	color: midnightblue;
-}
-.price {
-	font-size: f.rem(24);
-	font-weight: bold;
 }

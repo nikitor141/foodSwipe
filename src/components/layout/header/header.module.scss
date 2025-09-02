@@ -1,8 +1,2 @@
-//anchors -------------------------------------------------
-
-// #foo,... {
-//    scroll-margin-top: var(--header-height);
-// }
-
-.header {
-}
+@use '@/styles/functions' as f;
+@use '@/styles/variables' as *;

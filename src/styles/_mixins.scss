@@ -1,4 +1,6 @@
 @use 'sass:map';
+@use '@/styles/functions' as f;
+@use '@/styles/variables' as *;
 
 @mixin themeToVars($theme) {
 	@each $key, $value in $theme {
@@ -21,32 +23,47 @@ $devices: (
 	}
 }
 
-/*
-	@mixin adaptive($device) {
-		@if $device == tabletReset {
-			@media (width > 1024px) {
-				@content;
-			}
-		}
-		@if $device == tablet {
-			@media (1024px >= width) {
-				@content;
-			}
-		}
-		@if $device == tabletOnly {
-			@media (1024px >= width > 530px) {
-				@content;
-			}
-		}
-		@if $device == mobileReset {
-			@media (width > 530px) {
-				@content;
-			}
-		}
-		@if $device == mobile {
-			@media (530px >= width) {
-				@content;
-			}
-		}
+/* @mixin glassyBorder(
+	$startColor: f.cl($cd-glass-border, 0.25),
+	$endColor: f.cl($cd-glass-border, 0.05),
+	$deg: 135deg,
+	$borderWidth: f.rem(1)
+) {
+	&::before {
+		content: '';
+		position: absolute;
+		z-index: -1;
+		inset: 0;
+		border-radius: inherit;
+		border: $borderWidth solid transparent;
+		background: linear-gradient($deg, $startColor, $endColor) border-box;
+		mask:
+			linear-gradient(black, black) border-box,
+			linear-gradient(black, black) padding-box;
+		mask-composite: subtract;
 	}
-*/
+} */
+
+@mixin glassyBorder($deg: 135deg, $borderWidth: f.rem(1)) {
+	/* position: relative; // для ::before */
+
+	&::before {
+		content: '';
+		position: absolute;
+		z-index: -1;
+		inset: 0;
+		border-radius: inherit;
+		border: $borderWidth solid transparent;
+		background: linear-gradient(
+				var(--border-deg, #{$deg}),
+				var(--border-start, f.cl($cd-glass-border, 0.25)),
+				var(--border-end, f.cl($cd-glass-border, 0.05))
+			)
+			border-box;
+		mask:
+			linear-gradient(black, black) border-box,
+			linear-gradient(black, black) padding-box;
+		mask-composite: subtract;
+		transition: background 0.35s ease; // чтобы градиент менялся плавно
+	}
+}

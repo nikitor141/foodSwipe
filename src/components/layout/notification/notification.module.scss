@@ -1,0 +1,146 @@
+@use '@/styles/functions' as f;
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as m;
+
+/* .notification {
+	position: fixed;
+	background-color: f.cl($cd-glass-background, 0.25);
+	animation: cubic-bezier(0.48, 0.44, 0.73, 1.33) slideDown 0.3s forwards;
+	border-radius: f.rem(20);
+	backdrop-filter: $blur;
+	padding: 0.7em 1.4em;
+
+	@include m.glassyBorder(135deg, f.rem(1), f.cl($cd-accent, 0.25), f.cl($cd-glass-border, 0.05));
+	display: none;
+
+	&.neutral,
+	&.positive,
+	&.negative {
+		display: block;
+	}
+}
+
+@keyframes slideDown {
+	from {
+		transform: translateY(0px);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(200px);
+		opacity: 1;
+	}
+} */
+
+/* .notification {
+	position: fixed;
+	top: f.rem(24);
+	left: 50%;
+	transform: translateX(-50%);
+	min-width: f.rem(260);
+	max-width: 90%;
+	padding: 0.8em 1.6em;
+	--deg: 135deg;
+
+	border-radius: f.rem(14);
+	background-color: f.cl($cd-glass-background, 0.45);
+	backdrop-filter: blur(12px) saturate(150%);
+
+	@include m.glassyBorder(f.cl($cd-accent, 0.25), f.cl($cd-glass-border, 0.05));
+
+	color: f.cl($cd-text);
+	font-size: f.rem(14);
+	line-height: 1.4;
+	text-align: center;
+	box-shadow: 0 f.rem(6) f.rem(24) rgba(0, 0, 0, 0.2);
+
+	opacity: 0;
+	pointer-events: none;
+	transform: translate(-50%, -20px);
+	transition:
+		opacity 0.35s ease,
+		transform 0.35s ease;
+
+	&.neutral,
+	&.positive,
+	&.negative {
+		opacity: 1;
+		transform: translate(-50%, 0);
+		pointer-events: auto;
+	}
+
+	&.positive {
+		@include m.glassyBorder(f.cl($cd-positive, 0.25), f.cl($cd-glass-border, 0.05));
+	}
+
+	&.negative {
+		@include m.glassyBorder(f.cl($cd-negative, 0.25), f.cl($cd-glass-border, 0.05));
+	}
+} */
+
+.notification {
+	--border-deg: 135deg;
+	--border-start: f.cl($cd-accent, 0.25);
+	--border-end: f.cl($cd-glass-border, 0.05);
+	@include m.glassyBorder;
+
+	position: absolute;
+	top: f.rem(24);
+	left: 0;
+	width: f.rem(300);
+	padding: 0.8em 1.6em;
+	font-size: f.rem(14);
+	line-height: 1.4;
+	color: f.cl($cd-text);
+	text-align: center;
+	pointer-events: none;
+	background-color: f.cl($cd-glass-background, 0.45);
+	border-radius: f.rem(14);
+	box-shadow: 0 f.rem(6) f.rem(24) rgba(0, 0, 0, 0.2);
+	opacity: 0;
+	backdrop-filter: blur(12px) saturate(150%);
+	//translate: -50% 0;
+	transition:
+		top 0.35s ease,
+		opacity 0.35s ease;
+
+	&--neutral,
+	&--positive,
+	&--negative {
+		pointer-events: auto;
+		user-select: none;
+		opacity: 1;
+
+		&:nth-child(2) {
+			top: f.rem(32);
+		}
+		&:nth-child(3) {
+			top: f.rem(40);
+		}
+	}
+	&[data-dragging='true'] {
+		transition: none;
+	}
+
+	&--positive {
+		--border-start: f.cl($cd-positive, 0.25);
+	}
+
+	&--negative {
+		--border-start: f.cl($cd-negative, 0.25);
+	}
+
+	&--vanishing {
+		animation: vanish 0.35s;
+	}
+}
+
+@keyframes vanish {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		top: 0;
+		opacity: 0;
+		transform: translateY(-100%);
+	}
+}
