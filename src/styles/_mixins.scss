@@ -1,6 +1,6 @@
 @use 'sass:map';
-@use '@/styles/functions' as f;
-@use '@/styles/variables' as *;
+@use 'functions' as f;
+@use 'variables' as *;
 
 @mixin themeToVars($theme) {
 	@each $key, $value in $theme {
@@ -45,7 +45,7 @@ $devices: (
 } */
 
 @mixin glassyBorder($deg: 135deg, $borderWidth: f.rem(1)) {
-	/* position: relative; // для ::before */
+	position: relative;
 
 	&::before {
 		content: '';
@@ -65,5 +65,21 @@ $devices: (
 			linear-gradient(black, black) padding-box;
 		mask-composite: subtract;
 		transition: background 0.35s ease; // чтобы градиент менялся плавно
+	}
+}
+
+@mixin btn() {
+	@include glassyBorder();
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: f.rem(45);
+	height: f.rem(45);
+	background-color: f.cl($cd-glass-background, 0.25);
+	border-radius: 50%;
+	svg {
+		width: 50%;
+		height: 50%;
+		fill: currentColor;
 	}
 }

@@ -1,4 +1,4 @@
-import { BaseScreenConstructor } from '@core/component/base-screen.component'
+import { ScreenSingleton } from '@core/component/base-screen.types'
 import { Component } from '@core/component/component'
 import { RenderService } from '@core/services/render.service'
 import { ThemesService } from '@core/services/themes.service'
@@ -19,11 +19,13 @@ export class Layout extends Singleton implements Component {
 		this.themeService.init()
 	}
 
-	setScreen(screen: BaseScreenConstructor): void {
+	setScreen<S extends ScreenSingleton>(screen: S): void {
 		if (!this.element) this.render()
 
-		const screenElement: Element = new screen().render()
+		const screenInstance = screen.instance
+		screenInstance.init()
 
+		const screenElement = screenInstance.render()
 		const content = this.element.querySelector(SELECTOR_CONTENT)
 
 		content.innerHTML = ''

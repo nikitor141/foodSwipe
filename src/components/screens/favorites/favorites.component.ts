@@ -8,8 +8,11 @@ export class Favorites extends BaseScreen {
 	element: HTMLElement
 	renderService: RenderService = RenderService.instance
 
-	constructor() {
-		super({ title: TITLE_FAVORITES })
+	protected constructor() {
+		super()
+	}
+	init() {
+		super.setTitle({ title: TITLE_FAVORITES })
 	}
 
 	render(): HTMLElement {

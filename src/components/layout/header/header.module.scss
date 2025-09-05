@@ -1,2 +1,49 @@
 @use '@/styles/functions' as f;
 @use '@/styles/variables' as *;
+@use '@/styles/mixins' as m;
+
+.header {
+	@include m.glassyBorder();
+	$padding-b: 20;
+	$padding-i: 40;
+	display: flex;
+	gap: f.rem(20);
+	align-items: center;
+	justify-content: space-between;
+	padding: f.rem($padding-b) f.rem($padding-i);
+	margin-inline: auto;
+	margin-top: f.rem(20);
+	background-color: f.cl($cd-glass-background, 0.45);
+	border-radius: f.rem(50);
+
+	&::after {
+		width: f.rem(2);
+		height: f.rem(20);
+		content: '';
+		background-color: f.cl($cd-glass-background, 0.5);
+		border-radius: f.rem(1);
+	}
+
+	&__nav {
+		position: relative;
+
+		ul {
+			display: flex;
+			gap: f.rem(20);
+			align-items: center;
+		}
+
+		&-indicator {
+			position: absolute;
+			bottom: f.rem(-$padding-b / 2);
+			left: 0;
+			width: f.rem(20);
+			height: f.rem(2);
+			background-color: f.cl($cd-accent);
+			border-radius: f.rem(1);
+		}
+	}
+	&__nav-link {
+		@include m.btn();
+	}
+}

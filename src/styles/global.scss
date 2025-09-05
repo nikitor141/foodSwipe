@@ -27,10 +27,10 @@ video {
 html {
 	--refRes: 1920;
 	$ratio: 0.5;
-	scroll-behavior: smooth;
+	overscroll-behavior: none;
 	font-size: calc(100vw / var(--refRes) * 10);
 	accent-color: f.cl($cd-accent);
-	overscroll-behavior: none;
+	scroll-behavior: smooth;
 
 	@media (min-width: 1921px) {
 		font-size: calc(10px + ($ratio * 10) * ((100vw - var(--refRes) * 1px) / var(--refRes)));
@@ -48,15 +48,15 @@ body {
 	font-family: $font;
 	font-size: $fs;
 	color: f.cl($cd-text);
+	touch-action: none;
 	background-color: f.cl($cd-background);
-	touch-action: manipulation;
 
 	&::before {
-		content: '';
-		inset: 0;
 		position: absolute;
-		background: url('@/assets/img/background/god-rays.png') top left / cover;
+		inset: 0;
 		z-index: -1;
+		content: '';
+		background: url('@/assets/img/background/god-rays.png') top left / cover;
 	}
 	&.positive::before {
 		filter: saturate(5) hue-rotate(250deg);

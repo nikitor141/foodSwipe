@@ -1,14 +1,16 @@
 import { NotificationService } from '@core/services/notification.service'
+import { Store } from '@core/store/store.ts'
 import { Layout } from '@/components/layout/layout.component'
 import { MESSAGE_REDIRECTED } from '@/constants/messages.constants'
 import { HOME_URL } from '@/constants/routes.constants'
 import { Singleton } from '@/utils/singleton'
-import { BaseScreenConstructor } from '../component/base-screen.component'
+import { ScreenSingleton } from '../component/base-screen.types'
 import { ROUTES } from './routes.data'
 
 export class Router extends Singleton {
-	#routes: Record<string, BaseScreenConstructor> = ROUTES
-	#currentRoute!: BaseScreenConstructor
+	#store: Store = Store.instance
+	#routes: Record<string, ScreenSingleton> = ROUTES
+	#currentRoute!: ScreenSingleton
 	#layout: Layout = Layout.instance
 	#notificationService: NotificationService = NotificationService.instance
 
@@ -19,6 +21,7 @@ export class Router extends Singleton {
 			this.#handleRouteChange()
 		})
 
+		this.#store.init()
 		this.#handleRouteChange()
 		this.#handleLinks()
 	}
@@ -45,6 +48,7 @@ export class Router extends Singleton {
 	#handleRouteChange(): void {
 		const path: string = this.getCurrentPath()
 
+		const previousRoute = this.#currentRoute
 		this.#currentRoute = this.#routes[path]
 
 		if (!this.#currentRoute) {
@@ -53,6 +57,7 @@ export class Router extends Singleton {
 			return
 		}
 
+		this.#store.updateState('screen', { previous: previousRoute, current: this.#currentRoute })
 		this.#render()
 	}
 
@@ -64,7 +69,7 @@ export class Router extends Singleton {
 			if (!link || this.#isExternalLink(link.href)) return
 
 			e.preventDefault()
-			this.navigate(link.href)
+			this.navigate(link.getAttribute('href') ?? HOME_URL)
 		})
 	}
 

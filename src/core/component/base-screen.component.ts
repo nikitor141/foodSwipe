@@ -1,19 +1,22 @@
 import { RenderService } from '@core/services/render.service'
+import { Singleton } from '@utils/singleton.ts'
 import { getTitle } from '@/config/seo.config'
 import { Component } from './component'
 
-export type BaseScreenConstructor = new (...args: any) => BaseScreen
-
-export abstract class BaseScreen implements Component {
+export abstract class BaseScreen extends Singleton implements Component {
 	abstract element: HTMLElement
 	abstract renderService: RenderService
-	title: string
 
-	constructor({ title }: { title: string }) {
+	protected constructor() {
+		super()
+	}
+
+	protected setTitle({ title }: { title: string }) {
 		document.title = getTitle(title)
 	}
 
 	abstract render(): HTMLElement
+	abstract init(): void
 
 	destroy?(): void
 	removeListeners?(): void

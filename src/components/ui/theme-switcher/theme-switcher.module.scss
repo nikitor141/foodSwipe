@@ -1,0 +1,8 @@
+@use '@/styles/functions' as f;
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as m;
+
+.theme-switcher {
+	@include m.btn();
+	order: 1;
+}

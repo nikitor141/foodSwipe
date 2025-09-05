@@ -5,9 +5,26 @@ export class StorageService extends Singleton {
 		super()
 	}
 
+	getAll(): Record<string, any> | null {
+		if (localStorage.length === 0) return null
+
+		const result: Record<string, any> = {}
+		for (let i = 0; i < localStorage.length; i++) {
+			const key = localStorage.key(i)
+
+			result[key] = this.getItem(key)
+		}
+		return result
+	}
+
 	getItem(key: string) {
 		const value = localStorage.getItem(key)
-		return value ?? JSON.parse(value)
+
+		try {
+			return JSON.parse(value)
+		} catch (e) {
+			return value ?? null
+		}
 	}
 
 	setItem(key: string, value: any): void {
