@@ -3,7 +3,7 @@
 @use '@/styles/mixins' as m;
 
 .header {
-	@include m.glassyBorder();
+	@include m.glassyBorder(0deg, f.rem(1));
 	$btn-width: 45;
 	$btn-height: 45;
 	$gap: 20;

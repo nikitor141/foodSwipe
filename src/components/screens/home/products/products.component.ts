@@ -1,6 +1,6 @@
 import { ProductCard } from '@components/screens/home/products/product-card/product-card.component.ts'
 import { Component } from '@core/component/component'
-import { ProductsManagerService } from '@core/services/productsManager.service.ts'
+import { ProductsManagerService } from '@core/services/products-manager.service.ts'
 import { RenderService } from '@core/services/render.service'
 import { Product } from '@/api/products.service.ts'
 import styles from './products.module.scss'
@@ -17,14 +17,16 @@ export class Products implements Component {
 
 	fill() {
 		for (const product of this.productsManagerService.getActive()) {
-			this.refill('push', product)
+			this.refill('add', product)
 		}
 	}
-	refill(type: 'shift' | 'push', product: Product) {
+	refill(type: 'delete' | 'add', product: Product) {
 		const productsListEl: HTMLElement = this.element.querySelector('#products__list')
 
-		if (type === 'push') {
-			new ProductCard(product).mount(productsListEl)
+		if (type === 'add') {
+			const productCard = new ProductCard(product)
+			productCard.mount(productsListEl)
+			this.productsManagerService.addProductCard(product, productCard)
 		}
 	}
 

@@ -23,28 +23,23 @@ $devices: (
 	}
 }
 
-/* @mixin glassyBorder(
-	$startColor: f.cl($cd-glass-border, 0.25),
-	$endColor: f.cl($cd-glass-border, 0.05),
-	$deg: 135deg,
-	$borderWidth: f.rem(1)
-) {
-	&::before {
-		content: '';
-		position: absolute;
-		z-index: -1;
-		inset: 0;
-		border-radius: inherit;
-		border: $borderWidth solid transparent;
-		background: linear-gradient($deg, $startColor, $endColor) border-box;
-		mask:
-			linear-gradient(black, black) border-box,
-			linear-gradient(black, black) padding-box;
-		mask-composite: subtract;
-	}
-} */
+@property --angle {
+	syntax: '<angle>';
+	inherits: false;
+	initial-value: 0deg;
+}
 
-@mixin glassyBorder($deg: 135deg, $borderWidth: f.rem(1)) {
+@mixin glassyBorder(
+	$deg: 135deg,
+	$borderWidth: f.rem(1),
+	$colors: (
+		f.cl($cd-glass-border, 0.25),
+		f.cl($cd-glass-border, 0.05),
+		f.cl($cd-glass-border, 0.25)
+	),
+	$animate: false
+) {
+	--angle: $deg;
 	position: relative;
 
 	&::before {
@@ -54,17 +49,23 @@ $devices: (
 		inset: 0;
 		border-radius: inherit;
 		border: $borderWidth solid transparent;
-		background: linear-gradient(
-				var(--border-deg, #{$deg}),
-				var(--border-start, f.cl($cd-glass-border, 0.25)),
-				var(--border-end, f.cl($cd-glass-border, 0.05))
-			)
-			border-box;
+		background: conic-gradient(from var(--angle), $colors) border-box;
 		mask:
 			linear-gradient(black, black) border-box,
 			linear-gradient(black, black) padding-box;
 		mask-composite: subtract;
-		transition: background 0.35s ease; // чтобы градиент менялся плавно
+
+		@if $animate {
+			animation: borderAnimation 5s infinite;
+		}
+	}
+}
+@keyframes borderAnimation {
+	0% {
+		--angle: 0deg;
+	}
+	100% {
+		--angle: 360deg;
 	}
 }
 

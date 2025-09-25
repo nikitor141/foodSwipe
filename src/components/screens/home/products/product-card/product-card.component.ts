@@ -1,6 +1,6 @@
 import { Component } from '@core/component/component.ts'
 import { DragConfig, DragCustomEvent, DragService } from '@core/services/drag.service.ts'
-import { ProductsManagerService } from '@core/services/productsManager.service.ts'
+import { ProductsManagerService } from '@core/services/products-manager.service.ts'
 import { RenderService } from '@core/services/render.service.ts'
 import { Product } from '@/api/products.service.ts'
 import styles from './product-card.module.scss'
@@ -11,16 +11,7 @@ export class ProductCard implements Component {
 	renderService: RenderService = RenderService.instance
 	dragService: DragService = DragService.instance
 	productsManagerService: ProductsManagerService = ProductsManagerService.instance
-
-	id: Product['id']
-	url: Product['url']
-	name: Product['name']
-	image: Product['image']
-	price: Product['price']
-	categoryId: Product['categoryId']
-	categoryName: Product['categoryName']
-	subcategoryId: Product['subcategoryId']
-	subcategoryName: Product['subcategoryName']
+	product: Product
 
 	dragConfig: DragConfig = {
 		componentInstance: this,
@@ -31,15 +22,7 @@ export class ProductCard implements Component {
 	}
 
 	constructor(product: Product) {
-		this.id = product.id
-		this.url = product.url
-		this.name = product.name
-		this.image = product.image
-		this.price = product.price
-		this.categoryId = product.categoryId
-		this.categoryName = product.categoryName
-		this.subcategoryId = product.subcategoryId
-		this.subcategoryName = product.subcategoryName
+		this.product = product
 	}
 
 	#produceDragMove = (e: DragCustomEvent<this>): void => {
@@ -108,18 +91,18 @@ export class ProductCard implements Component {
 		const pricePennyEl = this.element.querySelector(`.${styles['product-card__price']} sup`)
 		const imgEl: HTMLImageElement = linkEl.querySelector('img')
 
-		const price = this.price.toString().split('.')
+		const price = this.product.price.toString().split('.')
 		const priceMain = price[0]
 		const pricePenny = price[1]
 
-		subcategoryEl.textContent = this.subcategoryName
-		categoryEl.textContent = this.categoryName
-		nameLinkEl.textContent = this.name
-		nameLinkEl.href = this.url
-		linkEl.href = this.url
+		subcategoryEl.textContent = this.product.subcategoryName
+		categoryEl.textContent = this.product.categoryName
+		nameLinkEl.textContent = this.product.name
+		nameLinkEl.href = this.product.url
+		linkEl.href = this.product.url
 		priceMainEl.textContent = priceMain
 		pricePennyEl.textContent = pricePenny
-		imgEl.src = this.image
+		imgEl.src = this.product.image
 
 		return this.element
 	}
