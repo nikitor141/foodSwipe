@@ -38,6 +38,8 @@ export class Store extends Singleton {
 
 	#saveStateDebounced = debounce(this.#saveState.bind(this), 1000)
 
+	debouncedUpdateState = debounce(this.updateState.bind(this), 1000)
+
 	updateState<K extends keyof StateItems>(key: K, value: StateItems[K]): void {
 		if (this.state[key] === value) return
 

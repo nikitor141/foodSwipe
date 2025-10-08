@@ -1,6 +1,8 @@
 import { ProductCard } from '@components/screens/home/products/product-card/product-card.component.ts'
 import { DragCustomEvent } from '@core/services/drag.service.ts'
 import { NotificationService } from '@core/services/notification.service.ts'
+import { Store } from '@core/store/store.ts'
+import { debounce } from '@utils/debounce.ts'
 import { Singleton } from '@utils/singleton.ts'
 import { Excluded, Product, ProductsFetcherService } from '@/api/products-fetcher.service.ts'
 
@@ -16,6 +18,7 @@ interface ExcludedProduct {
 export class ProductsManagerService extends Singleton {
 	productsFetcherService: ProductsFetcherService = ProductsFetcherService.instance
 	notificationService: NotificationService = NotificationService.instance
+	store: Store = Store.instance
 
 	#activeLimit: number = 3
 	#batchSize: number = 25
@@ -55,6 +58,9 @@ export class ProductsManagerService extends Singleton {
 		if (direction === 'left') {
 			this.#produceExclude(productCard)
 		}
+		if (direction === 'right') {
+			this.#produceFavorites(productCard)
+		}
 
 		this.#active.delete(productCard.product)
 		productCard.destroy()
@@ -62,6 +68,8 @@ export class ProductsManagerService extends Singleton {
 		if (this.#queue.size <= this.#activeLimit) void this.#refill()
 		this.#refillActive()
 	}
+
+	#produceFavorites(productCard) {}
 
 	#produceExclude(productCard: ProductCard) {
 		const { id, subcategoryId: subCat, categoryId: cat } = productCard.product
@@ -77,24 +85,27 @@ export class ProductsManagerService extends Singleton {
 		subCatCounter.products.add(id)
 
 		// Проверяем количество товаров
-		if (subCatCounter.products.size !== 5) return
+		if (subCatCounter.products.size === 5) {
+			// Очищаем все продукты этой подкатегории
+			this.#clearProductsBySubcategory(subCat)
+			// Записываем подкатегорию в subCat индекс
+			this.#subcategoriesExcluded.set(subCat, { subCat, cat })
+			// Считаем категории
+			if (!this.#categoryCounter.has(cat)) this.#categoryCounter.set(cat, { subCats: new Set() })
+			const catCounter = this.#categoryCounter.get(cat)
+			catCounter.subCats.add(subCat)
 
-		// Очищаем все продукты этой подкатегории
-		this.#clearProductsBySubcategory(subCat)
-		// Записываем подкатегорию в subCat индекс
-		this.#subcategoriesExcluded.set(subCat, { subCat, cat })
-		// Считаем категории
-		if (!this.#categoryCounter.has(cat)) this.#categoryCounter.set(cat, { subCats: new Set() })
-		const catCounter = this.#categoryCounter.get(cat)
-		catCounter.subCats.add(subCat)
+			// Проверяем количество подкатегорий
+			if (catCounter.subCats.size === 2) {
+				// Очищаем все подкатегории и продукты категории
+				this.#clearSubcategoriesByCategory(cat)
+				// Записываем категорию в исключённые
+				this.#categoriesExcluded.add(cat)
+			}
+		}
 
-		// Проверяем количество подкатегорий
-		if (catCounter.subCats.size !== 2) return
-
-		// Очищаем все подкатегории и продукты категории
-		this.#clearSubcategoriesByCategory(cat)
-		// Записываем категорию в исключённые
-		this.#categoriesExcluded.add(cat)
+		// Сохраняем состояние
+		this.#saveExcludedState()
 	}
 
 	#clearProductsBySubcategory(subCat: ExcludedProduct['subCat']) {
@@ -112,6 +123,22 @@ export class ProductsManagerService extends Singleton {
 		if (this.#purgeActiveAndQueueBy('subcategoryId', subCat)) this.#refillActive()
 	}
 
+	//todo
+	#removeCategoryFromExcluded(cat: ExcludedProduct['cat']) {
+		this.#categoriesExcluded.delete(cat)
+
+		void this.#refill().then(() => {
+			this.#refillActive()
+		})
+
+		// Сохраняем состояние
+		this.#saveExcludedState()
+	}
+
+	#saveExcludedState() {
+		this.store.debouncedUpdateState('excluded', this.getExcluded())
+	}
+
 	#clearSubcategoriesByCategory(cat: ExcludedProduct['cat']) {
 		//  Удаляем ВСЕ подкатегории, которые вообще встречались в этой категории
 		const allSubCats = this.#subcategoriesByCategory.get(cat)
@@ -125,6 +152,9 @@ export class ProductsManagerService extends Singleton {
 
 		// Удаляем из очереди и активных
 		if (this.#purgeActiveAndQueueBy('categoryId', cat)) this.#refillActive()
+
+		// Сохраняем состояние
+		this.#saveExcludedState()
 	}
 
 	#purgeActiveAndQueueBy(
@@ -156,12 +186,12 @@ export class ProductsManagerService extends Singleton {
 		}
 	}
 
-	async #requestProducts(): Promise<Product[]> {
+	async #requestProducts(excluded: Excluded): Promise<Product[]> {
 		try {
 			const countToFill = this.#batchSize - this.#queue.size
 			if (!countToFill) return []
 
-			return await this.productsFetcherService.getRandomProducts(countToFill, this.getExcluded())
+			return await this.productsFetcherService.getRandomProducts(countToFill, excluded)
 		} catch (err) {
 			this.notificationService.show(err.message ?? 'Ошибка загрузки', 'negative')
 			return []
@@ -169,7 +199,9 @@ export class ProductsManagerService extends Singleton {
 	}
 
 	async #fill() {
-		const products: Product[] = await this.#requestProducts()
+		if (this.store.state.excluded) this.#categoriesExcluded = new Set(this.store.state.excluded.categories)
+
+		const products: Product[] = await this.#requestProducts(this.store.state.excluded ?? this.getExcluded())
 
 		for (const product of products) {
 			if (this.#active.size < this.#activeLimit) {
@@ -193,7 +225,7 @@ export class ProductsManagerService extends Singleton {
 	}
 
 	async #refill() {
-		const products: Product[] = await this.#requestProducts()
+		const products: Product[] = await this.#requestProducts(this.getExcluded())
 
 		for (const product of products) {
 			this.#queue.add(product)

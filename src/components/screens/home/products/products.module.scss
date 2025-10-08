@@ -3,4 +3,6 @@
 
 .products__list {
 	display: grid;
+	grid-template-areas: 'stack';
+	place-items: center;
 }
