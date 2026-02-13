@@ -3,6 +3,7 @@ import { NotificationService } from '@core/services/notification.service.ts'
 import { ObserverService } from '@core/services/observer.service.ts'
 import { Store } from '@core/store/store.ts'
 import { ExcludedAPI, ExcludedRuntime } from '@core/types/excluded.types.ts'
+import { WishListRuntime } from '@core/types/wishList.types.ts'
 import { debounce } from '@utils/debounce.ts'
 import { getAsObject } from '@utils/getAsObject.ts'
 import { Singleton } from '@utils/singleton.ts'
@@ -15,6 +16,7 @@ export interface ProductsManagerEvents {
 	'subcategory-excluded': number
 	'category-included': number
 	'subcategory-included': number
+	'products-manager-ready': boolean
 }
 
 export type ProductsManagerEvent = {
@@ -35,7 +37,10 @@ export class ProductsManagerService extends Singleton {
 	#pending: boolean = false
 
 	#allCategories: AllCategories | null = null
+	//todo #pending вместо allCategoriesPromise?
 	#allCategoriesPromise: Promise<AllCategories> | null = null
+
+	#wishList!: Set<Product>
 
 	#excluded: ExcludedRuntime = {
 		categories: new Set(this.store.state.excluded?.categories ?? []),
@@ -49,7 +54,6 @@ export class ProductsManagerService extends Singleton {
 
 	protected constructor() {
 		super()
-
 		void this.#fill()
 	}
 
@@ -69,15 +73,36 @@ export class ProductsManagerService extends Singleton {
 		return this.#allCategories
 	}
 
-	getExcluded(): ExcludedAPI {
+	getExcludedRuntime(): ExcludedRuntime {
+		return this.#excluded
+	}
+
+	getWishListRuntime(): WishListRuntime {
+		return this.#wishList
+	}
+
+	getExcludedForApi(): ExcludedAPI {
 		return {
 			categories: [...this.#excluded.categories],
 			subcategories: [...this.#excluded.subcategories],
 			products: [...this.#excluded.products]
 		}
 	}
-	getExcludedRuntime(): ExcludedRuntime {
-		return this.#excluded
+
+	getSerializedExcluded() {
+		return getAsObject(this.#excluded)
+	}
+
+	getNormalizedWishList() {
+		return Array.from(this.#wishList, product => product.id)
+	}
+
+	#saveExcludedState() {
+		this.store.batchedUpdateState('excluded', this.getSerializedExcluded())
+	}
+
+	#saveWishListState() {
+		this.store.batchedUpdateState('wishList', this.getNormalizedWishList())
 	}
 
 	isReady() {
@@ -127,7 +152,11 @@ export class ProductsManagerService extends Singleton {
 		// && confirm('Исключить всю категорию?')
 	}
 
-	#addToWishList(product: Product) {}
+	#addToWishList(product: Product) {
+		this.#wishList.add(product)
+
+		this.#saveWishListState()
+	}
 
 	#excludeProduct({ categoryId, subcategoryId, id }: Product) {
 		if (!this.#excluded.productsBySubcategory.has(subcategoryId))
@@ -209,13 +238,6 @@ export class ProductsManagerService extends Singleton {
 		return wasIncluded
 	}
 
-	#saveExcludedState() {
-		this.store.debouncedUpdateState('excluded', {
-			...this.getExcluded(),
-			productsBySubcategory: getAsObject(this.#excluded.productsBySubcategory)
-		})
-	}
-
 	#purgeProductsBySubcategory(subCatId: number) {
 		const productsSet = this.#excluded.productsBySubcategory.get(subCatId)
 		if (!productsSet) return
@@ -245,12 +267,22 @@ export class ProductsManagerService extends Singleton {
 		return activeWasFiltered
 	}
 
-	async #requestProducts(excluded: ExcludedAPI): Promise<Product[]> {
+	async #requestProducts(): Promise<Product[]> {
 		try {
 			const countToFill = this.#batchSize - this.#queue.size
 			if (!countToFill) return []
 
-			return await this.productsFetcherService.getRandomProducts(countToFill, excluded)
+			return await this.productsFetcherService.getRandomProducts(countToFill, this.getExcludedForApi())
+		} catch (err) {
+			this.notificationService.show(err.message ?? 'Ошибка загрузки', 'negative')
+			return []
+		}
+	}
+
+	async #requestWishProducts() {
+		try {
+			const promises = this.store.state.wishList.map(id => this.productsFetcherService.getProductById(id))
+			return await Promise.all(promises)
 		} catch (err) {
 			this.notificationService.show(err.message ?? 'Ошибка загрузки', 'negative')
 			return []
@@ -260,7 +292,7 @@ export class ProductsManagerService extends Singleton {
 	async #fill() {
 		if (!this.#allCategories) await this.getAllCategories()
 
-		const products: Product[] = await this.#requestProducts(this.getExcluded())
+		const products: Product[] = await this.#requestProducts()
 		if (!products.length) this.notificationService.show('Товары закончились. Загляните в фильтры!', 'neutral')
 		for (const product of products) {
 			if (this.#active.size < this.#activeLimit) {
@@ -270,7 +302,11 @@ export class ProductsManagerService extends Singleton {
 
 			this.#queue.add(product)
 		}
+
+		this.#wishList = new Set(await this.#requestWishProducts())
+
 		this.#ready = true
+		this.#notify('products-manager-ready', true)
 	}
 	#refillActive() {
 		// queue мутирует, поэтому так, чтобы не плодить оберточный array
@@ -288,7 +324,7 @@ export class ProductsManagerService extends Singleton {
 		if (this.#pending) return
 		this.#pending = true
 
-		const products: Product[] = await this.#requestProducts(this.getExcluded())
+		const products: Product[] = await this.#requestProducts()
 		if (!products.length) this.notificationService.show('Товары закончились. Загляните в фильтры!', 'neutral')
 		for (const product of products) {
 			this.#queue.add(product)

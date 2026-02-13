@@ -11,8 +11,18 @@
 	padding: f.rem(-$stack-item-shift) f.rem(15);
 	margin: 0 auto;
 	> [data-component='product-card'] {
+		grid-area: stack;
+
+		&:not(:last-child) {
+			pointer-events: none;
+		}
+
 		&:nth-child(1) {
 			translate: 0 f.rem($stack-item-shift);
+
+			* {
+				opacity: 0;
+			}
 		}
 
 		&:nth-child(2) {

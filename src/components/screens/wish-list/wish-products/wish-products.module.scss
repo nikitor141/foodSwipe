@@ -1,0 +1,14 @@
+@use '@/styles/functions' as f;
+@use '@/styles/variables' as *;
+
+.wish-products {
+	ul {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: f.rem(10);
+
+		[data-component='product-card'] {
+			--scale: 0.5;
+		}
+	}
+}

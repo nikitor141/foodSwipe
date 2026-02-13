@@ -34,9 +34,13 @@ export class Store extends Singleton {
 		}
 	}
 
-	#saveStateDebounced = debounce(this.#saveState.bind(this), 1000)
+	#saveStateDebounced = debounce(this.#saveState.bind(this), 250)
+	// Вызывается только внутри updateState.
+	// Задержка нужна, ибо updateState не группируется в один вызов
+	// и вызывается сам зачастую из событий, то есть из разных макрозадач
 
-	debouncedUpdateState = debounce(this.updateState.bind(this), 1000)
+	batchedUpdateState = debounce(this.updateState.bind(this), 0)
+	// вызывается программно, задержка не нужна для быстроты, но нужна группировка в один вызов
 
 	updateState<K extends keyof StateItems>(key: K, value: StateItems[K]): void {
 		if (this.state[key] === value) return

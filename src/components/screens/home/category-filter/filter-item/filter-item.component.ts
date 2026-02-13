@@ -1,11 +1,7 @@
 import { FilterItemSubcategoriesList } from '@components/screens/home/category-filter/filter-item/filter-item-subcategories-list/filter-item-subcategories-list.component.ts'
 import { Checkbox } from '@components/ui/checkbox/checkbox.component.ts'
 import { Component } from '@core/component/component'
-import {
-	ProductsManagerEvent,
-	ProductsManagerEvents,
-	ProductsManagerService
-} from '@core/services/products-manager.service.ts'
+import { ProductsManagerEvents, ProductsManagerService } from '@core/services/products-manager.service.ts'
 import { RenderService } from '@core/services/render.service'
 import { Category, Subcategory } from '@/api/products-fetcher.service.ts'
 import styles from './filter-item.module.scss'

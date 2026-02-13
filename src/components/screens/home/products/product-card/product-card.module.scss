@@ -27,16 +27,15 @@
 	--card-gradient-negative-opacity: 0.1;
 	--card-gradient-positive-end: 60%;
 	--card-gradient-negative-end: 80%;
+	--scale: 1;
 
-	$scale: 1;
 	$border-width: f.rem(1);
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	grid-area: stack;
 	min-width: 0;
-	max-width: $scale * 100%;
-	padding: f.rem($scale * 25);
+	max-width: 100%;
+	padding: calc(var(--scale) * f.rem(25));
 	container-type: inline-size;
 	line-height: 1.2;
 	user-select: none;
@@ -81,20 +80,12 @@
 		transition: opacity 0.2s;
 	}
 
-	&:not(:last-child) {
-		pointer-events: none;
-
-		* {
-			opacity: 0;
-		}
-	}
-
 	&__tag {
 		display: flex;
 		align-items: center;
-		max-height: f.rem($scale * 25);
-		margin-bottom: f.rem($scale * 20);
-		font-size: f.rem($scale * 12);
+		max-height: calc(var(--scale) * f.rem(25));
+		margin-bottom: calc(var(--scale) * f.rem(20));
+		font-size: calc(var(--scale) * f.rem(12));
 		color: f.cl($cd-small-text, $a: 0.6);
 		text-wrap: nowrap;
 
@@ -113,18 +104,18 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		height: f.rem($scale * 200);
-		padding: f.rem($scale * 10);
-		margin-bottom: f.rem($scale * 15);
+		height: calc(var(--scale) * f.rem(200));
+		padding: calc(var(--scale) * f.rem(10));
+		margin-bottom: calc(var(--scale) * f.rem(15));
 		background-color: white;
-		border-radius: f.rem($scale * 20);
+		border-radius: calc(var(--scale) * f.rem(20));
 
 		img {
 			width: auto;
 		}
 	}
 	&__price {
-		font-size: f.rem($scale * 26);
+		font-size: calc(var(--scale) * f.rem(26));
 		font-weight: 600;
 		color: f.cl($cd-accent);
 		sup {
@@ -133,9 +124,9 @@
 	}
 	&__name {
 		height: 1em * 3 * 1.2;
-		margin-bottom: f.rem($scale * 15);
+		margin-bottom: calc(var(--scale) * f.rem(15));
 		overflow: hidden;
-		font-size: f.rem($scale * 24);
+		font-size: calc(var(--scale) * f.rem(24));
 		font-weight: bold;
 	}
 }

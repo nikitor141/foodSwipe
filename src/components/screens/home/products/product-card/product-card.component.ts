@@ -12,6 +12,8 @@ export class ProductCard implements Component {
 	dragService: DragService = DragService.instance
 	productsManagerService: ProductsManagerService = ProductsManagerService.instance
 	product: Product
+	inactiveLink: boolean
+	draggable: boolean
 	#isDestroying: boolean = false
 
 	dragConfig: DragConfig = {
@@ -22,8 +24,10 @@ export class ProductCard implements Component {
 		snap: { animation: true, forwards: true }
 	}
 
-	constructor(product: Product) {
+	constructor(product: Product, config: { inactiveLink: boolean; draggable: boolean }) {
 		this.product = product
+		this.inactiveLink = config.inactiveLink
+		this.draggable = config.draggable
 	}
 
 	#handleDragMove = (e: DragCustomEvent<this>): void => {
@@ -78,6 +82,8 @@ export class ProductCard implements Component {
 
 		parent[method](this.element)
 
+		if (!this.draggable) return
+
 		requestAnimationFrame(() => {
 			if (!this.element || this.#isDestroying) return
 			this.#addListeners()
@@ -86,15 +92,16 @@ export class ProductCard implements Component {
 
 	destroy(direction?: DragCustomEvent['detail']['direction']) {
 		if (this.#isDestroying) return
+		this.#isDestroying = true
 
 		const clear = () => {
-			this.dragService.detach(this.element)
+			if (this.draggable) {
+				this.dragService.detach(this.element)
+			}
 			this.element.onanimationend = null
 			this.element.remove()
 			this.element = null
 		}
-
-		this.#isDestroying = true
 
 		if (direction) {
 			this.element.classList.add(styles[`product-card--vanishing-${direction}`])
@@ -110,10 +117,10 @@ export class ProductCard implements Component {
 		const subcategoryEl = this.element.querySelector<HTMLSpanElement>(`.${styles['product-card__tag-subcategory']}`)
 		const categoryEl = this.element.querySelector<HTMLSpanElement>(`.${styles['product-card__tag-category']}`)
 		const nameLinkEl = this.element.querySelector<HTMLAnchorElement>(`.${styles['product-card__name']} a`)
-		const linkEl = this.element.querySelector<HTMLAnchorElement>(`.${styles['product-card__image']}`)
+		const imgLinkEl = this.element.querySelector<HTMLAnchorElement>(`.${styles['product-card__image']}`)
 		const priceMainEl = this.element.querySelector<HTMLSpanElement>(`.${styles['product-card__price']} span`)
 		const pricePennyEl = this.element.querySelector(`.${styles['product-card__price']} sup`)
-		const imgEl: HTMLImageElement = linkEl.querySelector('img')
+		const imgEl: HTMLImageElement = imgLinkEl.querySelector('img')
 
 		const price = this.product.price.toString().split('.')
 		const priceMain = price[0]
@@ -122,8 +129,12 @@ export class ProductCard implements Component {
 		subcategoryEl.textContent = this.product.subcategoryName
 		categoryEl.textContent = this.product.categoryName
 		nameLinkEl.textContent = this.product.name
-		nameLinkEl.href = this.product.url
-		linkEl.href = this.product.url
+
+		if (!this.inactiveLink) {
+			nameLinkEl.href = this.product.url
+			imgLinkEl.href = this.product.url
+		}
+
 		priceMainEl.textContent = priceMain
 		pricePennyEl.textContent = pricePenny
 		imgEl.src = this.product.image
