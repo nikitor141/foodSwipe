@@ -9,6 +9,9 @@
 	$btn-height: 35;
 	$gap: 20;
 
+	position: sticky;
+	top: f.rem(5);
+	z-index: 1;
 	display: flex;
 	gap: f.rem($gap);
 	align-items: center;
@@ -17,6 +20,7 @@
 	margin: f.rem(5) auto;
 	background-color: f.cl($cd-glass-background, $a: 0.45);
 	border-radius: f.rem(50);
+	backdrop-filter: $blur;
 
 	&::after {
 		width: f.rem(2);
@@ -44,14 +48,15 @@
 		}
 
 		&-indicator {
+			@include m.btn($btn-width, $btn-height);
 			position: absolute;
 			top: 0;
 			right: 0;
 			left: 0;
+			z-index: -1;
+			width: auto;
 			height: f.rem($btn-height);
-			background-color: f.cl($cd-accent, $a: 0.3);
-			border-radius: f.rem(math.div($btn-height, 2));
-			box-shadow: 0 0 f.rem(15) f.cl($cd-accent, $a: 0.3);
+			border-radius: 100vw;
 
 			&--going-right {
 				transition:
@@ -67,11 +72,21 @@
 		}
 	}
 	&__nav-link {
-		@include m.btn($btn-width, $btn-height);
+		display: flex;
+		width: f.rem($btn-width);
+		height: f.rem($btn-height);
+		color: f.cl($cd-text, $a: 0.6);
 		transition: color 0.3s 0.15s ease-out;
 
+		svg {
+			width: 50%;
+			height: 50%;
+			margin: auto;
+			fill: currentColor;
+		}
+
 		&--active {
-			color: f.cl($cd-accent);
+			color: f.cl($cd-text);
 		}
 	}
 }

@@ -34,7 +34,7 @@ export class WishProducts implements Component {
 
 	render(): HTMLElement {
 		this.element = this.renderService.htmlToElement(template, [], styles) as HTMLElement
-		this.productsListEl = this.element.querySelector('ul')
+		this.productsListEl = this.element.querySelector(`.${styles['wish-products__list']}`)
 		if (this.productsManagerService.isReady()) this.#fill()
 
 		return this.element
