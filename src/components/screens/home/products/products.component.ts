@@ -38,6 +38,8 @@ export class Products implements Component {
 
 			case 'products-active-delete':
 				this.#productCardsByProduct.get(data.product).destroy(data.direction)
+				console.log(this.#productCardsByProduct) // подозреваю, что weakMap не очищается
+				// product или productCard где-то хранится??
 				break
 		}
 	}

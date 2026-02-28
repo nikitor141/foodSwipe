@@ -19,7 +19,7 @@
 		position: fixed;
 		bottom: 0;
 		width: 100%;
-		padding: f.rem(15) 0;
+		padding: f.rem(5) 0;
 		background-color: f.cl($cd-glass-background, $a: 0.45);
 		border-radius: f.rem(14) f.rem(14) 0 0;
 		backdrop-filter: $liquid-blur-d;
@@ -32,6 +32,9 @@
 	&__clear-button {
 		@include m.btn();
 		margin: 0 auto;
-		background-color: f.cl($cd-negative, $a: 0.45);
+		[data-theme='light'] &,
+		& {
+			background-color: f.cl($cd-negative, $a: 0.45);
+		}
 	}
 }

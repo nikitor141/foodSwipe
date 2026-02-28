@@ -115,13 +115,19 @@ export class CategoryFilter implements Component {
 
 			if (filterItem.isParent) {
 				e.detail.checked
-					? this.productsManagerService.includeCategory(filterItem.category.id)
-					: this.productsManagerService.excludeCategory(filterItem.category.id)
+					? this.productsManagerService.excluded.includeCategory(filterItem.category.id)
+					: this.productsManagerService.excluded.excludeCategory(filterItem.category.id)
 				//	работает корректно
 			} else {
 				e.detail.checked
-					? this.productsManagerService.includeSubcategory(filterItem.category.id, filterItem.parent.category.id)
-					: this.productsManagerService.excludeSubcategory(filterItem.category.id, filterItem.parent.category.id)
+					? this.productsManagerService.excluded.includeSubcategory(
+							filterItem.category.id,
+							filterItem.parent.category.id
+						)
+					: this.productsManagerService.excluded.excludeSubcategory(
+							filterItem.category.id,
+							filterItem.parent.category.id
+						)
 			}
 		})
 

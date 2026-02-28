@@ -128,7 +128,7 @@ export class FilterItem implements Component {
 	render(): HTMLElement {
 		this.element = this.renderService.htmlToElement(template, [], styles) as HTMLElement
 
-		const excluded = this.productsManagerService.getExcludedRuntime()
+		const excluded = this.productsManagerService.excluded.getRuntime()
 
 		this.checkbox = new Checkbox(
 			this.isParent

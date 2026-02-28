@@ -17,6 +17,8 @@ export interface ProductsManagerEvents {
 	'category-included': number
 	'subcategory-included': number
 	'products-manager-ready': boolean
+	'wish-list-cleared': void
+	'wish-list-removed': { product: Product }
 }
 
 export type ProductsManagerEvent = {
@@ -73,36 +75,127 @@ export class ProductsManagerService extends Singleton {
 		return this.#allCategories
 	}
 
-	getExcludedRuntime(): ExcludedRuntime {
-		return this.#excluded
-	}
+	excluded = {
+		getRuntime: (): ExcludedRuntime => this.#excluded,
 
-	getWishListRuntime(): WishListRuntime {
-		return this.#wishList
-	}
-
-	getExcludedForApi(): ExcludedAPI {
-		return {
+		getForApi: (): ExcludedAPI => ({
 			categories: [...this.#excluded.categories],
 			subcategories: [...this.#excluded.subcategories],
 			products: [...this.#excluded.products]
+		}),
+
+		getSerialized: () => getAsObject(this.#excluded),
+
+		excludeProduct: ({ categoryId, subcategoryId, id }: Product) => {
+			if (!this.#excluded.productsBySubcategory.has(subcategoryId))
+				this.#excluded.productsBySubcategory.set(subcategoryId, new Set())
+
+			let subcategoryProductsSet = this.#excluded.productsBySubcategory.get(subcategoryId)
+
+			subcategoryProductsSet.add(id)
+			this.#excluded.products.add(id)
+
+			// Исключаем подкатегорию по условию
+			if (this.#shouldExcludeSubcategory(subcategoryId)) {
+				this.excluded.excludeSubcategory(subcategoryId, categoryId)
+			}
+
+			this.#saveExcludedState()
+		},
+
+		excludeSubcategory: (subCatId: number, catId: number) => {
+			this.#excluded.subcategories.add(subCatId)
+			this.#notify('subcategory-excluded', subCatId)
+
+			this.#purgeProductsBySubcategory(subCatId)
+
+			const activeOrQueueWasFiltered = this.#purgeActiveAndQueueBy('subcategoryId', subCatId)
+			if (activeOrQueueWasFiltered) this.#ensureActiveFilled()
+
+			// Исключаем категорию по условию
+			if (this.#shouldExcludeCategory(catId)) {
+				this.excluded.excludeCategory(catId)
+			}
+
+			this.#saveExcludedState()
+		},
+
+		excludeCategory: (catId: number) => {
+			this.#allCategories.categories[catId].subcategoryIds.forEach(subCatId => {
+				this.#purgeProductsBySubcategory(subCatId)
+				this.excluded.includeSubcategory(subCatId, catId)
+			})
+
+			this.#excluded.categories.add(catId)
+			this.#notify('category-excluded', catId)
+
+			const activeOrQueueWasFiltered = this.#purgeActiveAndQueueBy('categoryId', catId)
+			if (activeOrQueueWasFiltered) this.#ensureActiveFilled()
+
+			this.#saveExcludedState()
+		},
+
+		includeSubcategory: (subCatId: number, catId: number) => {
+			const categoryWasIncluded = this.excluded.includeCategory(catId)
+			if (categoryWasIncluded) {
+				this.#allCategories.categories[catId].subcategoryIds.forEach(siblingSubCatId => {
+					if (siblingSubCatId === subCatId) return
+					this.excluded.excludeSubcategory(siblingSubCatId, catId)
+				})
+			}
+
+			this.#purgeProductsBySubcategory(subCatId)
+			this.#excluded.subcategories.delete(subCatId)
+
+			this.#notify('subcategory-included', subCatId)
+			this.#ensureActiveFilled()
+			this.#saveExcludedState()
+		},
+
+		includeCategory: (catId: number) => {
+			const wasIncluded = this.#excluded.categories.delete(catId)
+			if (!wasIncluded) return wasIncluded
+
+			this.#notify('category-included', catId)
+			this.#ensureActiveFilled()
+			this.#saveExcludedState()
+
+			return wasIncluded
 		}
 	}
 
-	getSerializedExcluded() {
-		return getAsObject(this.#excluded)
-	}
+	wishList = {
+		getRuntime: (): WishListRuntime => this.#wishList,
 
-	getNormalizedWishList() {
-		return Array.from(this.#wishList, product => product.id)
+		getNormalized: () => Array.from(this.#wishList, product => product.id),
+
+		addProduct: (product: Product) => {
+			this.#wishList.add(product)
+
+			this.#saveWishListState()
+		},
+
+		remove: (product: Product) => {
+			this.#wishList.delete(product)
+			this.#notify('wish-list-removed', { product })
+
+			this.#saveWishListState()
+		},
+
+		clear: () => {
+			this.#wishList.clear()
+			this.#notify('wish-list-cleared', null)
+
+			this.#saveWishListState()
+		}
 	}
 
 	#saveExcludedState() {
-		this.store.batchedUpdateState('excluded', this.getSerializedExcluded())
+		this.store.batchedUpdateState('excluded', this.excluded.getSerialized())
 	}
 
 	#saveWishListState() {
-		this.store.batchedUpdateState('wishList', this.getNormalizedWishList())
+		this.store.batchedUpdateState('wishList', this.wishList.getNormalized())
 	}
 
 	isReady() {
@@ -111,10 +204,11 @@ export class ProductsManagerService extends Singleton {
 
 	swipe(product: Product, direction: DragCustomEvent['detail']['direction']) {
 		if (direction === 'left') {
-			this.#excludeProduct(product)
+			this.excluded.excludeProduct(product)
 		}
+
 		if (direction === 'right') {
-			this.#addToWishList(product)
+			this.wishList.addProduct(product)
 		}
 
 		this.#mutateActive('delete', product, direction)
@@ -152,92 +246,6 @@ export class ProductsManagerService extends Singleton {
 		// && confirm('Исключить всю категорию?')
 	}
 
-	#addToWishList(product: Product) {
-		this.#wishList.add(product)
-
-		this.#saveWishListState()
-	}
-
-	#excludeProduct({ categoryId, subcategoryId, id }: Product) {
-		if (!this.#excluded.productsBySubcategory.has(subcategoryId))
-			this.#excluded.productsBySubcategory.set(subcategoryId, new Set())
-
-		let subcategoryProductsSet = this.#excluded.productsBySubcategory.get(subcategoryId)
-
-		subcategoryProductsSet.add(id)
-		this.#excluded.products.add(id)
-
-		// Исключаем подкатегорию по условию
-		if (this.#shouldExcludeSubcategory(subcategoryId)) {
-			this.excludeSubcategory(subcategoryId, categoryId)
-		}
-
-		this.#saveExcludedState()
-	}
-
-	excludeSubcategory(subCatId: number, catId: number) {
-		this.#excluded.subcategories.add(subCatId)
-		this.#notify('subcategory-excluded', subCatId)
-
-		this.#purgeProductsBySubcategory(subCatId)
-
-		const activeOrQueueWasFiltered = this.#purgeActiveAndQueueBy('subcategoryId', subCatId)
-		if (activeOrQueueWasFiltered) this.#ensureActiveFilled()
-
-		// Исключаем категорию по условию
-		if (this.#shouldExcludeCategory(catId)) {
-			this.excludeCategory(catId)
-		}
-
-		this.#saveExcludedState()
-	}
-
-	excludeCategory(catId: number) {
-		this.#allCategories.categories[catId].subcategoryIds.forEach(subCatId => {
-			// this.#excluded.subcategories.delete(subCatId)
-
-			this.#purgeProductsBySubcategory(subCatId)
-			this.includeSubcategory(subCatId, catId)
-		})
-
-		this.#excluded.categories.add(catId)
-		this.#notify('category-excluded', catId)
-
-		const activeOrQueueWasFiltered = this.#purgeActiveAndQueueBy('categoryId', catId)
-		if (activeOrQueueWasFiltered) this.#ensureActiveFilled()
-
-		this.#saveExcludedState()
-	}
-
-	includeSubcategory(subCatId: number, catId: number) {
-		const categoryWasIncluded = this.includeCategory(catId)
-		if (categoryWasIncluded) {
-			this.#allCategories.categories[catId].subcategoryIds.forEach(siblingSubCatId => {
-				if (siblingSubCatId === subCatId) return
-				this.excludeSubcategory(siblingSubCatId, catId)
-			})
-		}
-		// this.includeCategory(catId)
-
-		this.#purgeProductsBySubcategory(subCatId)
-		this.#excluded.subcategories.delete(subCatId)
-
-		this.#notify('subcategory-included', subCatId)
-		this.#ensureActiveFilled()
-		this.#saveExcludedState()
-	}
-
-	includeCategory(catId: number) {
-		const wasIncluded = this.#excluded.categories.delete(catId)
-		if (!wasIncluded) return wasIncluded
-
-		this.#notify('category-included', catId)
-		this.#ensureActiveFilled()
-		this.#saveExcludedState()
-
-		return wasIncluded
-	}
-
 	#purgeProductsBySubcategory(subCatId: number) {
 		const productsSet = this.#excluded.productsBySubcategory.get(subCatId)
 		if (!productsSet) return
@@ -272,7 +280,7 @@ export class ProductsManagerService extends Singleton {
 			const countToFill = this.#batchSize - this.#queue.size
 			if (!countToFill) return []
 
-			return await this.productsFetcherService.getRandomProducts(countToFill, this.getExcludedForApi())
+			return await this.productsFetcherService.getRandomProducts(countToFill, this.excluded.getForApi())
 		} catch (err) {
 			this.notificationService.show(err.message ?? 'Ошибка загрузки', 'negative')
 			return []
@@ -308,6 +316,7 @@ export class ProductsManagerService extends Singleton {
 		this.#ready = true
 		this.#notify('products-manager-ready', true)
 	}
+
 	#refillActive() {
 		// queue мутирует, поэтому так, чтобы не плодить оберточный array
 		while (this.#active.size < this.#activeLimit) {
