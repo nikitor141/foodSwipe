@@ -8,7 +8,7 @@
 		grid-template-columns: repeat(2, 1fr);
 		gap: f.rem(10);
 		padding: 0 f.rem(15) f.rem(80);
-		overflow-y: auto;
+		//overflow-y: auto;
 
 		[data-component='product-card'] {
 			--scale: 0.5;

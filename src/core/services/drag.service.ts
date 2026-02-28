@@ -325,6 +325,7 @@ export class DragService extends Singleton {
 			center: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
 		}
 
+		// todo тут происходит что-то странное
 		this.#onPointerDown = e => {
 			if (config.handles) {
 				const target = e.target as Node

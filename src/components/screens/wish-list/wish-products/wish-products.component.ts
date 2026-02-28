@@ -1,5 +1,6 @@
 import { ProductCard } from '@components/screens/home/products/product-card/product-card.component.ts'
 import { WishList } from '@components/screens/wish-list/wish-list.component.ts'
+import { Checkbox } from '@components/ui/checkbox/checkbox.component.ts'
 import { Component } from '@core/component/component'
 import { ObserverService } from '@core/services/observer.service.ts'
 import { ProductsManagerEvent, ProductsManagerService } from '@core/services/products-manager.service.ts'
@@ -16,7 +17,7 @@ export class WishProducts implements Component {
 	productsManagerService: ProductsManagerService = ProductsManagerService.instance
 	observerService: ObserverService = ObserverService.instance
 
-	#productCardsByProduct: WeakMap<Product, ProductCard> = new WeakMap()
+	#productCardsByProduct: Map<Product, ProductCard> = new Map()
 
 	constructor() {
 		this.observerService.subscribe(this, [this.productsManagerService], WishList)
@@ -27,6 +28,17 @@ export class WishProducts implements Component {
 		switch (type) {
 			case 'products-manager-ready':
 				this.#fill()
+				break
+			case 'wish-list-removed':
+				this.#productCardsByProduct.get(data.product).destroy()
+				this.#productCardsByProduct.delete(data.product)
+				break
+			case 'wish-list-cleared':
+				for (const productCard of this.#productCardsByProduct.values()) {
+					productCard.destroy()
+				}
+				this.#productCardsByProduct.clear()
+				break
 		}
 	}
 
@@ -34,6 +46,28 @@ export class WishProducts implements Component {
 		this.clearBtn.addEventListener('click', () => {
 			this.productsManagerService.wishList.clear()
 		})
+
+		this.element.oncontextmenu = e => {
+			e.preventDefault()
+		}
+		document.oncontextmenu ??= e => {
+			if (e.defaultPrevented) return
+		}
+
+		let timerId
+		this.element.onpointerdown = e => {
+			timerId = setTimeout(() => {
+				for (const productCard of this.#productCardsByProduct.values()) {
+					// const checkbox = new Checkbox(false, {})
+				}
+			}, 1000)
+		}
+		this.element.onpointerup =
+			this.element.onpointercancel =
+			this.element.onpointerleave =
+				() => {
+					clearTimeout(timerId)
+				}
 	}
 
 	#fill() {

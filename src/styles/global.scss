@@ -48,7 +48,7 @@ body {
 	font-family: $font;
 	font-size: $fs;
 	color: f.cl($cd-text);
-	touch-action: none;
+	//touch-action: none;
 	background-color: f.cl($cd-background);
 
 	&::before {

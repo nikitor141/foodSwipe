@@ -38,9 +38,14 @@ export class Products implements Component {
 
 			case 'products-active-delete':
 				this.#productCardsByProduct.get(data.product).destroy(data.direction)
-				console.log(this.#productCardsByProduct) // подозреваю, что weakMap не очищается
-				// product или productCard где-то хранится??
+				this.#productCardsByProduct.delete(data.product)
 				break
+
+			// удалять product из productCard не имеет смысла, ибо productCard и так не доступен,
+			// если нет ссылки на product
+
+			// при свайпе вправо ссылка на product сохраняется в wishList,
+			// поэтому GC не чистит weakMap
 		}
 	}
 
