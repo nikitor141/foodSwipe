@@ -24,7 +24,7 @@ export class ProductCard implements Component {
 		snap: { animation: true, forwards: true }
 	}
 
-	static #instancesByElement: WeakMap<HTMLElement, ProductCard> = new WeakMap()
+	static #instancesByElement = new WeakMap<HTMLElement, ProductCard>()
 
 	static from(element: HTMLElement): ProductCard {
 		return this.#instancesByElement.get(element)

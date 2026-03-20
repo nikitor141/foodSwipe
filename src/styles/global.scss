@@ -49,21 +49,19 @@ body {
 	font-size: $fs;
 	color: f.cl($cd-text);
 	//touch-action: none;
-	background-color: f.cl($cd-background);
 
-	&::before {
-		position: absolute;
-		inset: 0;
-		z-index: -1;
-		content: '';
-		background: url('@/assets/img/background/god-rays.png') top left / cover;
-	}
-	&.positive::before {
-		filter: saturate(5) hue-rotate(250deg);
-	}
-	&.negative::before {
-		filter: saturate(5) hue-rotate(110deg);
-	}
+	//&::before {
+	//	position: absolute;
+	//	inset: 0;
+	//	z-index: -1;
+	//	content: '';
+	//	background:
+	//		radial-gradient(circle at 20% 30%, f.cl($cd-positive, $a: 0.3) 0%, transparent 50%),
+	//		radial-gradient(circle at 80% 70%, f.cl($cd-negative, $a: 0.25) 0%, transparent 50%),
+	//		radial-gradient(circle at 30% 80%, f.cl($cd-accent, $a: 0.2) 0%, transparent 60%),
+	//		f.cl($cd-background) top left / cover;
+	//	//background-attachment: fixed; - имеет смысл если html прокручиваемый и фон распространяется на всю высоту.
+	//}
 
 	&.active {
 		position: fixed;

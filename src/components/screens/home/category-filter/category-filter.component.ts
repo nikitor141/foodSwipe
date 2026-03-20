@@ -25,7 +25,7 @@ export class CategoryFilter implements Component {
 	#expanded: boolean = false
 	#categoriesContainer: HTMLUListElement
 
-	#filterItemsById: Map<number, FilterItem> = new Map()
+	#filterItemsById = new Map<number, FilterItem>()
 
 	constructor() {
 		this.observerService.subscribe(this, [this.store, this.productsManagerService], Home)

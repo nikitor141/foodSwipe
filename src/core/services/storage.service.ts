@@ -5,10 +5,10 @@ export class StorageService extends Singleton {
 		super()
 	}
 
-	getAll(): Record<string, any> | null {
+	getAll(): Record<string, unknown> | null {
 		if (localStorage.length === 0) return null
 
-		const result: Record<string, any> = {}
+		const result: Record<string, unknown> = {}
 		for (let i = 0; i < localStorage.length; i++) {
 			const key = localStorage.key(i)
 

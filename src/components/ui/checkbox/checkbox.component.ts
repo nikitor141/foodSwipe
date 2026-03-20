@@ -6,7 +6,7 @@ import template from './checkbox.template.html?raw'
 export type CheckboxChangeEvent = CustomEvent<{ checked: boolean; changeIsTrusted: boolean }>
 
 export class Checkbox implements Component {
-	static #instancesByElement: WeakMap<HTMLElement, Checkbox> = new WeakMap()
+	static #instancesByElement = new WeakMap<HTMLElement, Checkbox>()
 
 	static from(element: HTMLElement): Checkbox {
 		return this.#instancesByElement.get(element)

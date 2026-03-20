@@ -8,7 +8,7 @@ import styles from './filter-item.module.scss'
 import template from './filter-item.template.html?raw'
 
 export class FilterItem implements Component {
-	static #instancesByElement: WeakMap<HTMLElement, FilterItem> = new WeakMap()
+	static #instancesByElement = new WeakMap<HTMLElement, FilterItem>()
 
 	static from(element: HTMLElement): FilterItem {
 		return this.#instancesByElement.get(element)

@@ -5,7 +5,7 @@ import { SELECTOR_NOTIFICATIONS_LIST } from '@/constants/selectors.constants'
 
 export class NotificationService extends Singleton {
 	#queue: Notification[] = []
-	#active: Set<Notification> = new Set()
+	#active = new Set<Notification>()
 	#limit: number = 3
 	#container: HTMLElement
 

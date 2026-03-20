@@ -1,12 +1,14 @@
 @use '@/styles/functions' as f;
 @use '@/styles/variables' as *;
 @use '@/styles/mixins' as m;
+@use '@/styles/keyframes' as *;
 
 .category-filter {
 	@include m.glassyBorder(45deg);
 
 	position: fixed;
 	z-index: 2;
+	//flex нужен, чтобы размер &__list был не больше чем доступное пространство и прокручивался
 	display: flex;
 	flex-direction: column;
 	width: 100%;
@@ -25,7 +27,7 @@
 	}
 
 	[data-theme='dark'] &[aria-expanded='true'] {
-		background-color: f.cl($cd-glass-background, $a: 0.45, $l: 0);
+		background-color: f.cl($cd-glass-background, $a: 0.65, $l: 0);
 	}
 
 	&[data-dragging='true'] {
@@ -54,8 +56,6 @@
 	}
 
 	&__list {
-		display: grid;
-		grid-template-columns: auto;
 		padding: 0 f.rem(24);
 		overflow-y: auto;
 		font-size: f.rem(10);

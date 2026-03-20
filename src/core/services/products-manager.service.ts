@@ -33,8 +33,8 @@ export class ProductsManagerService extends Singleton {
 
 	#activeLimit: number = 3
 	#batchSize: number = 25
-	#queue: Set<Product> = new Set()
-	#active: Set<Product> = new Set()
+	#queue = new Set<Product>()
+	#active = new Set<Product>()
 	#ready: boolean = false
 	#pending: boolean = false
 
@@ -48,7 +48,10 @@ export class ProductsManagerService extends Singleton {
 		categories: new Set(this.store.state.excluded?.categories ?? []),
 		subcategories: new Set(this.store.state.excluded?.subcategories ?? []),
 		productsBySubcategory: new Map(
-			Object.entries(this.store.state.excluded?.productsBySubcategory ?? {}).map(([k, v]) => [+k, new Set(v)])
+			Object.entries(this.store.state.excluded?.productsBySubcategory ?? {}).map(([subcategoryId, productsIds]) => [
+				+subcategoryId,
+				new Set(productsIds)
+			])
 		),
 		products: new Set(this.store.state.excluded?.products ?? [])
 	}

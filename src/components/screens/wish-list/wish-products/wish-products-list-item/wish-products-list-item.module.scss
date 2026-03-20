@@ -2,4 +2,15 @@
 @use '@/styles/variables' as *;
 
 .wish-products__list-item {
+	opacity: 0;
+	scale: 0.2;
+
+	[data-component='wish-products'][data-ready='true'] & {
+		$transitionOptions: 0.2s calc(var(--index) * 0.1s) ease-in-out;
+		opacity: 1;
+		scale: 1;
+		transition:
+			scale $transitionOptions,
+			opacity $transitionOptions;
+	}
 }

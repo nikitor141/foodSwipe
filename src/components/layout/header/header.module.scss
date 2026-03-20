@@ -94,9 +94,9 @@
 
 @keyframes indicatorMoving {
 	0% {
-		transform: none;
+		scale: none;
 	}
 	100% {
-		transform: scale(0.5);
+		scale: 0.5;
 	}
 }

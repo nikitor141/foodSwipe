@@ -41,6 +41,8 @@ export class Header implements Component {
 		const activeLinkBtn: HTMLElement = this.element.querySelector(
 			`.${styles['header__nav-link']}[href="${this.store.state.screen.current.instance.path}"]`
 		)
+
+		//todo переписать на anchor() positioning
 		const allActiveLinkBtns: NodeList = this.element.querySelectorAll(`.${styles['header__nav-link--active']}`)
 
 		const navCoords = nav.getBoundingClientRect()

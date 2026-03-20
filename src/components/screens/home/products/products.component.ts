@@ -14,7 +14,7 @@ export class Products implements Component {
 	productsManagerService: ProductsManagerService = ProductsManagerService.instance
 	observerService: ObserverService = ObserverService.instance
 
-	#productCardsByProduct: WeakMap<Product, ProductCard> = new WeakMap()
+	#productCardsByProduct = new WeakMap<Product, ProductCard>()
 
 	constructor() {
 		this.observerService.subscribe(this, [this.productsManagerService], Home)

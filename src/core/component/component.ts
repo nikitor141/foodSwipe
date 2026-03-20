@@ -10,6 +10,6 @@ export interface Component {
 	render(): Element | HTMLElement | SVGElement //todo T GenericType исходя из каждого template корневого элемента
 	// Убрать as HTMLElement и похожие
 	mount?(parent: HTMLElement, method: 'append' | 'prepend'): void
-	destroy?(...args: any): void
+	destroy?(...args: unknown[]): void
 }
 //todo dynamicComponent

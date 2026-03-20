@@ -9,6 +9,7 @@ import { Product } from '@/api/products-fetcher.service.ts'
 import styles from './wish-products.module.scss'
 import template from './wish-products.template.html?raw'
 
+type Mode = 'view' | 'edit'
 export class WishProducts implements Component {
 	element: HTMLElement
 	productsListEl!: HTMLElement
@@ -17,11 +18,12 @@ export class WishProducts implements Component {
 	productsManagerService: ProductsManagerService = ProductsManagerService.instance
 	observerService: ObserverService = ObserverService.instance
 
-	#productCardsByProduct: Map<Product, ProductCard> = new Map()
+	#items = new Map<Product, { productCard: ProductCard; li: WishProductsListItemComponent }>()
+	#productsByLiElements = new WeakMap<HTMLLIElement, Product>()
 
-	#ProductCardsByLIElements: WeakMap<HTMLLIElement, ProductCard> = new WeakMap()
-	#LiByProductCard: WeakMap<ProductCard, WishProductsListItemComponent> = new WeakMap()
-	#selectedListItems: Set<HTMLLIElement> = new Set()
+	#selectedLiElements = new Set<HTMLLIElement>()
+
+	#mode: Mode = 'view'
 
 	constructor() {
 		this.observerService.subscribe(this, [this.productsManagerService], WishList)
@@ -34,86 +36,112 @@ export class WishProducts implements Component {
 				this.#fill()
 				break
 			case 'wish-list-removed':
-				const productCard = this.#productCardsByProduct.get(data.product)
-				this.#productCardsByProduct.delete(data.product)
+				const { productCard, li } = this.#items.get(data.product)
+				this.#selectedLiElements.delete(li.element as HTMLLIElement)
+				this.#items.delete(data.product)
+
 				productCard.destroy()
-				const li = this.#LiByProductCard.get(productCard)
-				this.#selectedListItems.delete(li.element as HTMLLIElement)
 				li.destroy()
 				break
 			case 'wish-list-cleared':
-				for (const productCard of this.#productCardsByProduct.values()) {
+				for (const { productCard, li } of this.#items.values()) {
 					productCard.destroy()
-					this.#LiByProductCard.get(productCard).destroy()
+					li.destroy()
 				}
-				this.#productCardsByProduct.clear()
-				this.#selectedListItems.clear()
+
+				this.#items.clear()
+				this.#selectedLiElements.clear()
 				break
+		}
+	}
+
+	#setMode(mode: Mode) {
+		this.#mode = mode
+		this.productsListEl.dataset.wishProductsListMode = mode
+		this.#updateClearBtnIcon()
+
+		switch (mode) {
+			case 'view':
+				this.element.removeEventListener('click', this.#handleLiClick)
+				this.#selectedLiElements.clear()
+				break
+			case 'edit':
+				this.element.addEventListener('click', this.#handleLiClick)
+				break
+		}
+	}
+
+	#setHoldEvent() {
+		let timeoutId: ReturnType<typeof setTimeout>
+		this.element.onpointerdown = () => {
+			timeoutId = setTimeout(() => this.element.dispatchEvent(new CustomEvent('pointerhold')), 500)
+		}
+
+		this.element.onpointerup =
+			this.element.onpointercancel =
+			this.element.onpointerleave =
+				() => clearTimeout(timeoutId)
+
+		document.oncontextmenu ??= e => {
+			if (e.defaultPrevented) return
+		}
+
+		this.element.oncontextmenu = e => {
+			e.preventDefault()
 		}
 	}
 
 	#addListeners() {
 		this.clearBtn.addEventListener('click', this.#handleClearBtnClick)
 
-		this.element.oncontextmenu = e => {
-			e.preventDefault()
-		}
-		document.oncontextmenu ??= e => {
-			if (e.defaultPrevented) return
-		}
+		this.#setHoldEvent()
 
-		let timeoutId: ReturnType<typeof setTimeout>
-		this.element.onpointerdown = () => {
-			timeoutId = setTimeout(() => this.#handleAfterHold(), 500)
-		}
-		this.element.onpointerup =
-			this.element.onpointercancel =
-			this.element.onpointerleave =
-				() => clearTimeout(timeoutId)
+		this.element.addEventListener('pointerhold', () => this.#setMode('edit'))
 	}
 
 	#handleClearBtnClick = () => {
-		switch (this.productsListEl.dataset.wishProductsListMode) {
+		switch (this.#mode) {
 			case 'view':
 				this.productsManagerService.wishList.clear()
 				break
 			case 'edit':
-				this.#selectedListItems.forEach(li => {
-					const productCard = this.#ProductCardsByLIElements.get(li)
+				this.#selectedLiElements.forEach(li => {
+					const product = this.#productsByLiElements.get(li)
+					const { productCard } = this.#items.get(product)
 					this.productsManagerService.wishList.remove(productCard.product)
 				})
 				break
 		}
-		this.productsListEl.dataset.wishProductsListMode = 'view'
-		this.element.removeEventListener('click', this.#handleLiClick)
-		this.#updateClearBtnIcon()
-	}
-
-	#handleAfterHold() {
-		this.productsListEl.dataset.wishProductsListMode = 'edit'
-		this.#updateClearBtnIcon()
-
-		this.element.addEventListener('click', this.#handleLiClick)
+		this.#setMode('view')
 	}
 
 	#handleLiClick = (e: PointerEvent) => {
 		const target = e.target as HTMLElement
 		const liEl = target?.closest('[data-component="wish-products-list-item"]') as HTMLLIElement
-		if (!liEl) return
+		if (!liEl) {
+			this.element
+				.querySelectorAll('[data-selected="true"]')
+				.forEach((liEl: HTMLLIElement) => (liEl.dataset.selected = 'false'))
 
-		this.#selectedListItems.has(liEl) ? this.#selectedListItems.delete(liEl) : this.#selectedListItems.add(liEl)
+			this.#setMode('view')
+			return
+		}
+
+		const isSelected = this.#selectedLiElements.has(liEl)
+		isSelected ? this.#selectedLiElements.delete(liEl) : this.#selectedLiElements.add(liEl)
+		liEl.dataset.selected = String(!isSelected)
+
 		this.#updateClearBtnIcon()
-		console.log(this.#selectedListItems)
+		console.log(this.#selectedLiElements)
 	}
 	#updateClearBtnIcon() {
-		const mode = this.productsListEl.dataset.wishProductsListMode
 		const useEl = this.element.querySelector('use')
-		switch (mode) {
+		switch (this.#mode) {
 			case 'view':
 				useEl.setAttribute('href', '#remove')
 				break
 			case 'edit':
-				this.#selectedListItems.size === 0
+				this.#selectedLiElements.size === 0
 					? useEl.setAttribute('href', '#cancel')
 					: useEl.setAttribute('href', '#remove')
 				break
@@ -121,21 +149,26 @@ export class WishProducts implements Component {
 	}
 
 	#fill() {
-		for (const product of this.productsManagerService.wishList.getRuntime()) {
+		const wishProducts = this.productsManagerService.wishList.getRuntime()
+		let reversedIndex = wishProducts.size
+		for (const product of wishProducts) {
 			const productCard = new ProductCard(product, { inactiveLink: false, draggable: false })
 			const li = new WishProductsListItemComponent()
 			li.mount(this.productsListEl, 'prepend')
+			li.element.style.setProperty('--index', String(reversedIndex--))
 			productCard.mount(li.element, 'append')
-			this.#productCardsByProduct.set(product, productCard)
-			this.#ProductCardsByLIElements.set(li.element as HTMLLIElement, productCard)
-			this.#LiByProductCard.set(productCard, li)
+
+			this.#items.set(product, { productCard, li })
+			this.#productsByLiElements.set(li.element as HTMLLIElement, product)
 		}
+		requestAnimationFrame(() => requestAnimationFrame(() => (this.element.dataset.ready = 'true')))
 	}
 
 	render() {
 		this.element = this.renderService.htmlToElement(template, [], styles) as HTMLElement
 		this.productsListEl = this.element.querySelector(`.${styles['wish-products__list']}`)
 		this.clearBtn = this.element.querySelector(`.${styles['wish-products__clear-button']}`)
+
 		if (this.productsManagerService.isReady()) this.#fill()
 
 		this.#addListeners()
@@ -143,3 +176,6 @@ export class WishProducts implements Component {
 		return this.element
 	}
 }
+
+//todo кастомная картинка вместо обычного текста о пустом списке (маскот или что-то типа)
+// сгенерировать в chatgpt

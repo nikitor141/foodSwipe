@@ -9,6 +9,12 @@
 	min-height: 100%;
 	//overflow: hidden; // не будет работать sticky
 	overflow-wrap: break-word;
+	$bg-options: fixed no-repeat top left / cover;
+	background:
+		radial-gradient(circle at 20% 30%, f.cl($cd-positive, $a: 0.3) 0%, transparent 50%) $bg-options,
+		radial-gradient(circle at 80% 70%, f.cl($cd-negative, $a: 0.25) 0%, transparent 50%) $bg-options,
+		radial-gradient(circle at 30% 80%, f.cl($cd-accent, $a: 0.2) 0%, transparent 60%) $bg-options,
+		f.cl($cd-background) $bg-options;
 }
 
 // common -------------------------------------------------
@@ -25,4 +31,10 @@
 
 .content {
 	flex-grow: 1;
+	//view-transition-name: content; - создает stacking context и поэтому ломает z-index у category-filter
 }
+//todo анимация slide в обе стороны при переключении экрана. Больше никакой анимации не нужно.
+//::view-transition-old(content),
+//::view-transition-new(content) {
+//	animation: slide 0.4s ease-in-out;
+//}

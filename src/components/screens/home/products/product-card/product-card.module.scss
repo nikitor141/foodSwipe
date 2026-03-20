@@ -31,8 +31,6 @@
 
 	$border-width: f.rem(1);
 	position: relative;
-	display: flex;
-	flex-direction: column;
 	min-width: 0;
 	max-width: 100%;
 	padding: calc(var(--scale) * f.rem(25));
@@ -62,7 +60,12 @@
 		left 0.4s,
 		rotate 0.4s;
 
-	@include m.glassyBorder;
+	@include m.glassyBorder(
+		$colors: (
+			transparent
+		),
+		$borderBackdropFilter: saturate(200%) contrast(150%)
+	);
 
 	&[data-dragging='true'] {
 		transition: none;

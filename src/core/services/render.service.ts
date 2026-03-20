@@ -37,9 +37,9 @@ export class RenderService extends Singleton {
 
 	#replaceComponentTags(rootElement: Element, components: ComponentConstructor[]) {
 		const componentTagPattern = /^component-/
-		const allChildrenElements = rootElement.getElementsByTagName('*')
+		const allChildrenElements = rootElement.querySelectorAll('*')
 
-		for (const element of allChildrenElements) {
+		for (const element of Array.from(allChildrenElements)) {
 			const elementTagName = element.tagName.toLowerCase()
 			if (!componentTagPattern.test(elementTagName)) continue
 
@@ -47,11 +47,10 @@ export class RenderService extends Singleton {
 			const foundComponent = components.find(component => component.name.toLowerCase() === componentName)
 			if (!foundComponent) continue
 
-			let attributes = {}
+			let attributes: Record<string, unknown> = {}
 			for (const attr of element.attributes) {
 				if (attr.name === 'class') continue
-				const value = isNumeric(attr.value) ? +attr.value : attr.value
-				attributes[attr.name] = value
+				attributes[attr.name] = isNumeric(attr.value) ? +attr.value : attr.value
 			}
 
 			const componentContent = new foundComponent(attributes).render()

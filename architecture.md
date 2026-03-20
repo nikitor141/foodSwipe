@@ -431,7 +431,7 @@ constructor() {
 ## Получение инстанса компонента из элемента 
 Некоторые компоненты сохраняют связь элемент ↔ инстанс через WeakMap:
 ```typescript
- static #instancesByElement: WeakMap<HTMLElement, ComponentClass> = new WeakMap()
+ static #instancesByElement = new WeakMap<HTMLElement, ComponentClass>()
 
 static from(element: HTMLElement): ComponentClass {
 return this.#instancesByElement.get(element)

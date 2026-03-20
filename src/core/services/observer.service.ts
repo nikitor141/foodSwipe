@@ -19,13 +19,13 @@ interface ObserversStore {
 }
 
 export class ObserverService extends Singleton {
-	#registry: Map<any, ObserversStore> = new Map()
+	#registry = new Map<unknown, ObserversStore>()
 
 	protected constructor() {
 		super()
 	}
 
-	makeObservable<Events extends Record<string, any>>(subject: any, getScreens: GetScreens) {
+	makeObservable<Events extends Record<string, unknown>>(subject: unknown, getScreens: GetScreens) {
 		this.#registry.set(subject, { byScreen: new Map(), independent: new Set() })
 
 		return <T extends string & keyof Events>(type: T, data: Events[T]) => {

@@ -13,3 +13,4 @@ export function getAsObject(map: Map<any, any> | object): {} {
 	}
 	return obj
 }
+//todo что-то тут не так, скорее всего не глубокое преобразование в объект. Использовать Object.fromEntries?

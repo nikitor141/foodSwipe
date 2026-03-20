@@ -37,7 +37,8 @@ $devices: (
 		f.cl($cd-glass-border, $a: 0.05),
 		f.cl($cd-glass-border, $a: 0.3)
 	),
-	$animate: false
+	$animate: false,
+	$borderBackdropFilter: none
 ) {
 	--angle: #{$deg};
 	position: relative;
@@ -54,6 +55,7 @@ $devices: (
 			linear-gradient(black, black) border-box,
 			linear-gradient(black, black) padding-box;
 		mask-composite: subtract;
+		backdrop-filter: $borderBackdropFilter;
 
 		@if $animate {
 			animation: borderAnimation 5s infinite;
