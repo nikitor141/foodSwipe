@@ -6,7 +6,7 @@
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	min-height: 100%;
+	min-block-size: 100%;
 	//overflow: hidden; // не будет работать sticky
 	overflow-wrap: break-word;
 	$bg-options: fixed no-repeat top left / cover;
@@ -20,9 +20,9 @@
 // common -------------------------------------------------
 
 .container {
-	width: 100%;
-	min-width: 320px;
-	max-width: f.rem(1130); //ширина контентной части
+	inline-size: 100%;
+	min-inline-size: 320px;
+	max-inline-size: f.rem(1130); //ширина контентной части
 	padding: 0 f.rem(15); // плюсуешь 2x padding к контентной части
 	margin: 0 auto;
 }

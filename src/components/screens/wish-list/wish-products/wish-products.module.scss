@@ -4,7 +4,7 @@
 @use '@/styles/keyframes' as *;
 
 .wish-products {
-	height: 100%;
+	block-size: 100%;
 	padding-bottom: f.rem(45);
 	&__list {
 		display: grid;
@@ -14,7 +14,6 @@
 		//overflow-y: auto;
 
 		[data-component='product-card'] {
-			--scale: 0.5;
 		}
 
 		&[data-wish-products-list-mode='edit'] {
@@ -39,7 +38,7 @@
 		@include m.glassyBorder();
 		position: fixed;
 		bottom: 0;
-		width: 100%;
+		inline-size: 100%;
 		padding: f.rem(5) 0;
 		background-color: f.cl($cd-glass-background, $a: 0.45);
 		border-radius: f.rem(14) f.rem(14) 0 0;

@@ -11,8 +11,8 @@
 	//flex нужен, чтобы размер &__list был не больше чем доступное пространство и прокручивался
 	display: flex;
 	flex-direction: column;
-	width: 100%;
-	height: 100%;
+	inline-size: 100%;
+	block-size: 100%;
 	padding: 0 0 calc(8dvh + f.rem(30));
 	user-select: none;
 	background-color: f.cl($cd-glass-background, $a: 0.45);
@@ -46,8 +46,8 @@
 
 		&::after {
 			display: block;
-			width: f.rem(40);
-			height: f.rem(4);
+			inline-size: f.rem(40);
+			block-size: f.rem(4);
 			margin-inline: auto;
 			content: '';
 			background-color: f.cl($cd-accent, $a: 0.25);

@@ -27,13 +27,11 @@
 	--card-gradient-negative-opacity: 0.1;
 	--card-gradient-positive-end: 60%;
 	--card-gradient-negative-end: 80%;
-	--scale: 1;
 
 	$border-width: f.rem(1);
 	position: relative;
-	min-width: 0;
-	max-width: 100%;
-	padding: calc(var(--scale) * f.rem(25));
+	min-inline-size: 0;
+	max-inline-size: 100%;
 	container-type: inline-size;
 	line-height: 1.2;
 	user-select: none;
@@ -49,7 +47,7 @@
 			transparent var(--card-gradient-negative-end)
 		),
 		f.cl($cd-glass-background, $a: 0.25);
-	border-radius: 13.7% / 9.9%;
+	border-radius: 13.7% / 9.9%; // Радиус с соотношением сторон
 	backdrop-filter: $blur;
 	transition:
 		--card-gradient-positive-opacity 0.4s,
@@ -79,16 +77,17 @@
 		animation: vanishRight 0.4s forwards;
 	}
 
-	* {
+	&__content {
+		padding: 9cqi;
 		transition: opacity 0.2s;
 	}
 
 	&__tag {
 		display: flex;
 		align-items: center;
-		max-height: calc(var(--scale) * f.rem(25));
-		margin-bottom: calc(var(--scale) * f.rem(20));
-		font-size: calc(var(--scale) * f.rem(12));
+		max-block-size: 8.5cqi;
+		margin-bottom: 7cqi;
+		font-size: 4cqi;
 		color: f.cl($cd-small-text, $a: 0.6);
 		text-wrap: nowrap;
 
@@ -99,26 +98,26 @@
 		}
 		svg {
 			flex-shrink: 0;
-			width: 1em;
-			height: 1em;
+			inline-size: 1em;
+			block-size: 1em;
 		}
 	}
 	&__image {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		height: calc(var(--scale) * f.rem(200));
-		padding: calc(var(--scale) * f.rem(10));
-		margin-bottom: calc(var(--scale) * f.rem(15));
+		block-size: 69cqi;
+		padding: 3.45cqi;
+		margin-bottom: 5.2cqi;
 		background-color: white;
-		border-radius: calc(var(--scale) * f.rem(20));
+		border-radius: 6.9cqi;
 
 		img {
-			width: auto;
+			inline-size: auto;
 		}
 	}
 	&__price {
-		font-size: calc(var(--scale) * f.rem(26));
+		font-size: 9cqi;
 		font-weight: 600;
 		color: f.cl($cd-accent);
 		sup {
@@ -126,10 +125,10 @@
 		}
 	}
 	&__name {
-		height: 1em * 3 * 1.2;
-		margin-bottom: calc(var(--scale) * f.rem(15));
+		block-size: 1em * 3 * 1.2;
+		margin-bottom: 5.2cqi;
 		overflow: hidden;
-		font-size: calc(var(--scale) * f.rem(24));
+		font-size: 8.3cqi;
 		font-weight: bold;
 	}
 }

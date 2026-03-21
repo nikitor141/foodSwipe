@@ -26,8 +26,8 @@
 	}
 
 	&::after {
-		width: f.rem(2);
-		height: f.rem(20);
+		inline-size: f.rem(2);
+		block-size: f.rem(20);
 		content: '';
 		background-color: f.cl($cd-glass-background, $a: 0.5);
 		border-radius: f.rem(1);
@@ -57,7 +57,7 @@
 			right: 0;
 			left: 0;
 			z-index: -1;
-			width: auto;
+			inline-size: auto;
 
 			&--going-right {
 				transition:
@@ -74,14 +74,14 @@
 	}
 	&__nav-link {
 		display: flex;
-		width: f.rem($btn-width);
-		height: f.rem($btn-height);
+		inline-size: f.rem($btn-width);
+		block-size: f.rem($btn-height);
 		color: f.cl($cd-text, $a: 0.6);
 		transition: color 0.3s 0.15s ease-out;
 
 		svg {
-			width: 50%;
-			height: 50%;
+			inline-size: 50%;
+			block-size: 50%;
 			margin: auto;
 			fill: currentColor;
 		}

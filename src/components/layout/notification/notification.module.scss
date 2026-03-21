@@ -6,7 +6,7 @@
 	position: absolute;
 	top: f.rem(24); //тут не надо, надо в list todo
 	left: 0;
-	width: f.rem(300);
+	inline-size: f.rem(300);
 	padding: 0.8em 1.6em;
 	font-size: f.rem(14);
 	line-height: 1.4;
