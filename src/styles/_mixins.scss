@@ -31,14 +31,14 @@ $devices: (
 
 @mixin glassyBorder(
 	$deg: 135deg,
-	$borderWidth: f.rem(1),
+	$border-width: f.rem(1),
 	$colors: (
 		f.cl($cd-glass-border, $a: 0.3),
 		f.cl($cd-glass-border, $a: 0.05),
 		f.cl($cd-glass-border, $a: 0.3)
 	),
 	$animate: false,
-	$borderBackdropFilter: none
+	$border-backdrop-filter: none
 ) {
 	--angle: #{$deg};
 	position: relative;
@@ -49,13 +49,13 @@ $devices: (
 		z-index: -1;
 		inset: 0;
 		border-radius: inherit;
-		border: $borderWidth solid transparent;
+		border: $border-width solid transparent;
 		background: conic-gradient(from var(--angle), $colors) border-box;
 		mask:
 			linear-gradient(black, black) border-box,
 			linear-gradient(black, black) padding-box;
 		mask-composite: subtract;
-		backdrop-filter: $borderBackdropFilter;
+		backdrop-filter: $border-backdrop-filter;
 
 		@if $animate {
 			animation: borderAnimation 5s infinite;

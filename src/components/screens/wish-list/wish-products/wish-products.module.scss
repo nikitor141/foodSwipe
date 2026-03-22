@@ -6,15 +6,12 @@
 .wish-products {
 	block-size: 100%;
 	padding-bottom: f.rem(45);
+
 	&__list {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		gap: f.rem(10);
 		padding: 0 f.rem(15) f.rem(35);
-		//overflow-y: auto;
-
-		[data-component='product-card'] {
-		}
 
 		&[data-wish-products-list-mode='edit'] {
 			[data-component='product-card'] {

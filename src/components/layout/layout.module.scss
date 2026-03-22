@@ -8,6 +8,7 @@
 	flex-direction: column;
 	min-block-size: 100%;
 	//overflow: hidden; // не будет работать sticky
+	//overflow: clip; - будет работать. hidden - спрятать область, clip - обрезать
 	overflow-wrap: break-word;
 	$bg-options: fixed no-repeat top left / cover;
 	background:

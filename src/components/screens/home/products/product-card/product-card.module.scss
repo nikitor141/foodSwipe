@@ -56,13 +56,16 @@
 		--card-gradient-negative-end 0.4s,
 		translate 0.4s,
 		left 0.4s,
-		rotate 0.4s;
+		rotate 0.4s,
+		opacity 0.2s,
+		//wish-products
+		scale 0.2s; //wish-products
 
 	@include m.glassyBorder(
 		$colors: (
 			transparent
 		),
-		$borderBackdropFilter: saturate(200%) contrast(150%)
+		$border-backdrop-filter: saturate(200%) contrast(150%)
 	);
 
 	&[data-dragging='true'] {
@@ -79,7 +82,7 @@
 
 	&__content {
 		padding: 9cqi;
-		transition: opacity 0.2s;
+		transition: opacity 0.2s; // products
 	}
 
 	&__tag {
@@ -106,11 +109,11 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		block-size: 69cqi;
-		padding: 3.45cqi;
-		margin-bottom: 5.2cqi;
+		block-size: 70cqi;
+		padding: 3.5cqi;
+		margin-bottom: 5cqi;
 		background-color: white;
-		border-radius: 6.9cqi;
+		border-radius: 7cqi;
 
 		img {
 			inline-size: auto;
@@ -126,9 +129,9 @@
 	}
 	&__name {
 		block-size: 1em * 3 * 1.2;
-		margin-bottom: 5.2cqi;
+		margin-bottom: 5cqi;
 		overflow: hidden;
-		font-size: 8.3cqi;
+		font-size: 8.5cqi;
 		font-weight: bold;
 	}
 }
