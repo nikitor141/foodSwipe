@@ -23,6 +23,8 @@
 	initial-value: 80%;
 }
 .product-card {
+	//todo слишком сильная прозрачность, раньше такого не было. Смотри запись экрана
+	// Возможно чекнуть коммит
 	--card-gradient-positive-opacity: 0.1;
 	--card-gradient-negative-opacity: 0.1;
 	--card-gradient-positive-end: 60%;

@@ -47,20 +47,10 @@ export class Store extends Singleton {
 
 		this.#saveStateDebounced() // выполнится позже, планируем раньше.
 
-		this.#stateProxy[key] = value
+		this.#state[key] = value
+		this.#notify(key, value)
+		if (key === 'screen') this.observerService.clearObservers(this.state.screen.previous)
 	}
-
-	#stateProxy = new Proxy(this.#state, {
-		set: <K extends keyof StateItems>(target: StateItems, property: K, newValue: StateItems[K]) => {
-			const success = Reflect.set(target, property, newValue)
-			if (success) {
-				this.#notify(property, newValue)
-
-				if (property === 'screen') this.observerService.clearObservers(this.state.screen.previous)
-			}
-			return success
-		}
-	})
 
 	set state(value: any) {
 		throw new Error('Cannot set state bypassing Store!')
