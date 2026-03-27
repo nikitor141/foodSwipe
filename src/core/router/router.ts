@@ -1,3 +1,5 @@
+import { ScreenSingleton } from '@core/component/base-screen.types.ts'
+import { ROUTES } from '@core/router/routes.data.ts'
 import { NotificationService } from '@core/services/notification.service'
 import { ObserverService } from '@core/services/observer.service.ts'
 import { Store } from '@core/store/store.ts'
@@ -5,8 +7,6 @@ import { Layout } from '@/components/layout/layout.component'
 import { MESSAGE_REDIRECTED } from '@/constants/messages.constants'
 import { HOME_URL } from '@/constants/routes.constants'
 import { Singleton } from '@/utils/singleton'
-import { ScreenSingleton } from '../component/base-screen.types'
-import { ROUTES } from './routes.data'
 
 export class Router extends Singleton {
 	#observerService: ObserverService = ObserverService.instance

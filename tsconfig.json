@@ -7,8 +7,8 @@
 			"@core/*": ["src/core/*"],
 			"@/*": ["src/*"]
 		},
-		"module": "ES2022",
-		"target": "es2022",
+		"module": "ESNext",
+		"target": "ESNext",
 
 		"moduleResolution": "bundler",
 		"allowImportingTsExtensions": true,
@@ -18,7 +18,23 @@
 		/* Vite specific */
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
-		"types": ["vite/client"]
+		"types": ["vite/client"],
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"allowUnusedLabels": false,
+		"noUncheckedSideEffectImports": true,
+		"noFallthroughCasesInSwitch": true,
+		"allowUnreachableCode": false,
+		"noUncheckedIndexedAccess": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"erasableSyntaxOnly": true,
+		"noImplicitOverride": true,
+		/* turn to true for debugging */
+		"noErrorTruncation": false,
+		"exactOptionalPropertyTypes": true,
+		"allowJs": true,
+		"checkJs": true
 	},
 	"exclude": ["node_modules"]
 }

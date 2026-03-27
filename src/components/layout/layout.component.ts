@@ -1,3 +1,4 @@
+import { Header } from '@components/layout/header/header.component.ts'
 import { ScreenSingleton } from '@core/component/base-screen.types'
 import { Component } from '@core/component/component'
 import { RenderService } from '@core/services/render.service'
@@ -5,7 +6,6 @@ import { ThemesService } from '@core/services/themes.service'
 import { Store } from '@core/store/store.ts'
 import { Singleton } from '@utils/singleton'
 import { SELECTOR_APP, SELECTOR_CONTENT } from '@/constants/selectors.constants'
-import { Header } from './header/header.component'
 import styles from './layout.module.scss'
 import template from './layout.template.html?raw'
 

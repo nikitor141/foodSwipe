@@ -206,11 +206,11 @@ export class ProductsManagerService extends Singleton {
 	}
 
 	swipe(product: Product, direction: DragCustomEvent['detail']['direction']) {
-		if (direction === 'left') {
+		if (direction.x === 'left') {
 			this.excluded.excludeProduct(product)
 		}
 
-		if (direction === 'right') {
+		if (direction.x === 'right') {
 			this.wishList.addProduct(product)
 		}
 

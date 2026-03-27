@@ -111,8 +111,8 @@ export class ProductCard implements Component {
 			this.element = null
 		}
 
-		if (direction) {
-			this.element.classList.add(styles[`product-card--vanishing-${direction}`])
+		if (direction.x) {
+			this.element.classList.add(styles[`product-card--vanishing-${direction.x}`])
 			this.element.onanimationend = clear
 		} else {
 			clear()
