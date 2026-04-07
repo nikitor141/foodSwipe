@@ -1,15 +1,10 @@
 {
 	"compilerOptions": {
-		"baseUrl": ".",
 		"paths": {
-			"@components/*": ["src/components/*"],
-			"@utils/*": ["src/utils/*"],
-			"@core/*": ["src/core/*"],
-			"@/*": ["src/*"]
+			"@/*": ["./src/*"]
 		},
 		"module": "ESNext",
 		"target": "ESNext",
-
 		"moduleResolution": "bundler",
 		"allowImportingTsExtensions": true,
 		"resolveJsonModule": true,
@@ -19,6 +14,7 @@
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
 		"types": ["vite/client"],
+		/* WebDevSimplified */
 		"strict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,

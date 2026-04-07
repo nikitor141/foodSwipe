@@ -1,5 +1,5 @@
-import { Store } from '@core/store/store.ts'
-import { Singleton } from '@utils/singleton'
+import { Store } from '@/core/store/store.ts'
+import { Singleton } from '@/utils/singleton'
 
 export type AvailableThemes = 'dark' | 'light' | 'system'
 type ApplicableThemes = 'dark' | 'light'
@@ -15,7 +15,7 @@ export class ThemesService extends Singleton {
 		super()
 	}
 
-	init(): void {
+	init() {
 		this.darkThemeMq.onchange = () => {
 			if (this.#getSavedTheme() !== 'system') return
 			this.#applyTheme(this.#getSystemTheme())
@@ -38,7 +38,7 @@ export class ThemesService extends Singleton {
 		this.store.updateState('theme', next)
 	}
 
-	#applyTheme(theme: ApplicableThemes): void {
+	#applyTheme(theme: ApplicableThemes) {
 		requestAnimationFrame(() => {
 			requestAnimationFrame(() => delete document.documentElement.dataset.themeChanging)
 		})

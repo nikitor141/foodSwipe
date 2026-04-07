@@ -1,8 +1,8 @@
-import { ObserverService } from '@core/services/observer.service.ts'
-import { StorageService } from '@core/services/storage.service.ts'
-import { StateItems } from '@core/store/store.types.ts'
-import { debounce } from '@utils/debounce.ts'
 import { INITIAL_STATE } from '@/config/state.config.ts'
+import { ObserverService } from '@/core/services/observer.service.ts'
+import { StorageService } from '@/core/services/storage.service.ts'
+import { StateItems } from '@/core/store/store.types.ts'
+import { debounce } from '@/utils/debounce.ts'
 import { Singleton } from '@/utils/singleton'
 
 export type StoreEvent = {
@@ -20,7 +20,7 @@ export class Store extends Singleton {
 	protected constructor() {
 		super()
 	}
-	init(): void {
+	init() {
 		this.#saveState()
 	}
 
@@ -42,7 +42,7 @@ export class Store extends Singleton {
 	batchedUpdateState = debounce(this.updateState.bind(this), 0)
 	// вызывается программно, задержка не нужна для быстроты, но нужна группировка в один вызов
 
-	updateState<K extends keyof StateItems>(key: K, value: StateItems[K]): void {
+	updateState<K extends keyof StateItems>(key: K, value: StateItems[K]) {
 		if (this.state[key] === value) return
 
 		this.#saveStateDebounced() // выполнится позже, планируем раньше.

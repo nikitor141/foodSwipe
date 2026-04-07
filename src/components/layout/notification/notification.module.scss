@@ -1,6 +1,6 @@
-@use '@/styles/functions' as f;
-@use '@/styles/variables' as *;
-@use '@/styles/mixins' as m;
+@use "@/styles/functions" as f;
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as m;
 
 .notification {
 	position: absolute;
@@ -36,7 +36,7 @@
 			top: f.rem(40);
 		}
 	}
-	&[data-dragging='true'] {
+	&[data-dragging="true"] {
 		transition: none;
 	}
 
@@ -71,9 +71,9 @@
 }
 
 @keyframes vanish {
-	0% {
-		opacity: 1;
-	}
+	// 0% {
+	// 	opacity: 1;
+	// }
 	100% {
 		opacity: 0;
 		transform: translateY(-100%);

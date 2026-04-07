@@ -31,16 +31,21 @@ header,
 aside {
 	display: block;
 }
-
 html,
 body {
-	block-size: 100%;
 	line-height: 1;
 	font-size: 14px;
-	scrollbar-gutter: stable;
 	-ms-text-size-adjust: 100%;
 	-moz-text-size-adjust: 100%;
 	-webkit-text-size-adjust: 100%;
+	min-block-size: 100svb;
+}
+
+html {
+	scrollbar-gutter: stable;
+}
+
+body {
 }
 
 input,

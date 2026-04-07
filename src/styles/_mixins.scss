@@ -1,21 +1,21 @@
-@use 'sass:map';
-@use 'functions' as f;
-@use 'variables' as *;
+@use "sass:map";
+@use "functions" as f;
+@use "variables" as *;
 
 @mixin themeToVars($theme) {
 	@each $key, $value in $theme {
-		@if $key != '_scheme' {
+		@if $key != "_scheme" {
 			--color-#{$key}: #{$value};
 		}
 	}
 }
 
 $devices: (
-	tabletReset: 'width > 1024px',
-	tablet: '1024px >= width',
-	tabletOnly: '1024px >= width > 530px',
-	mobileReset: 'width > 530px',
-	mobile: '530px >= width'
+	tabletReset: "width > 1024px",
+	tablet: "1024px >= width",
+	tabletOnly: "1024px >= width > 530px",
+	mobileReset: "width > 530px",
+	mobile: "530px >= width"
 );
 @mixin adaptive($device) {
 	@media (map.get($devices, $device)) {
@@ -24,7 +24,7 @@ $devices: (
 }
 
 @property --angle {
-	syntax: '<angle>';
+	syntax: "<angle>";
 	inherits: true;
 	initial-value: 0deg;
 }
@@ -44,7 +44,7 @@ $devices: (
 	position: relative;
 
 	&::before {
-		content: '';
+		content: "";
 		position: absolute;
 		z-index: -1;
 		inset: 0;
@@ -63,9 +63,9 @@ $devices: (
 	}
 }
 @keyframes borderAnimation {
-	0% {
-		--angle: 0deg;
-	}
+	// 0% {
+	// 	--angle: 0deg;
+	// }
 	100% {
 		--angle: 360deg;
 	}
@@ -79,8 +79,8 @@ $devices: (
 	inline-size: f.rem($btn-width);
 	block-size: f.rem($btn-height);
 	border-radius: 100vw;
-	background-color: f.cl($cd-glass-background, $l: 'calc(l * 0.8)', $a: 0.25);
-	[data-theme='light'] & {
+	background-color: f.cl($cd-glass-background, $l: "calc(l * 0.8)", $a: 0.25);
+	[data-theme="light"] & {
 		background-color: f.cl($cd-glass-background, $a: 0.25);
 	}
 

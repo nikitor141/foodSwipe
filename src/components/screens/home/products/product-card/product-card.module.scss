@@ -1,24 +1,24 @@
-@use '@/styles/functions' as f;
-@use '@/styles/variables' as *;
-@use '@/styles/mixins' as m;
+@use "@/styles/functions" as f;
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as m;
 
 @property --card-gradient-positive-opacity {
-	syntax: '<number>';
+	syntax: "<number>";
 	inherits: false;
 	initial-value: 0.1;
 }
 @property --card-gradient-negative-opacity {
-	syntax: '<number>';
+	syntax: "<number>";
 	inherits: false;
 	initial-value: 0.1;
 }
 @property --card-gradient-positive-end {
-	syntax: '<percentage>';
+	syntax: "<percentage>";
 	inherits: false;
 	initial-value: 60%;
 }
 @property --card-gradient-negative-end {
-	syntax: '<percentage>';
+	syntax: "<percentage>";
 	inherits: false;
 	initial-value: 80%;
 }
@@ -70,7 +70,7 @@
 		$border-backdrop-filter: saturate(200%) contrast(150%)
 	);
 
-	&[data-dragging='true'] {
+	&[data-dragging="true"] {
 		transition: none;
 	}
 

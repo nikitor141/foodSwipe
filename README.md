@@ -10,18 +10,22 @@
 
 ## Build
 
--  Build the project: `pnpm build`
--  Preview the build: `pnpm preview`
+- Build the project: `pnpm build`
+- Preview the build: `pnpm preview`
 
 ## Branches
 
--  ### main
-   -  Uses:
-      -  prettier
-      -  eslint (js, html)
--  ### next-gen
-   -  Uses:
-      -  biome - formatting .js files (linter is off)
-      -  prettier - for all other files
-      -  oxlint - .js
-      -  eslint - .html
+- ### main
+  - Uses:
+    - prettier
+    - eslint (js, html)
+- ### next-gen
+  - Uses:
+    - biome - formatting .js files (linter is off)
+    - prettier - for all other files
+    - oxlint - .js
+
+- ### now
+  - Uses:
+    - oxlint - .ts,.js
+    - oxfmt - .ts,.js,.html,.scss,.css

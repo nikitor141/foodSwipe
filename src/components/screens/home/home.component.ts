@@ -1,8 +1,9 @@
-import { CategoryFilter } from '@components/screens/home/category-filter/category-filter.component.ts'
-import { Products } from '@components/screens/home/products/products.component.ts'
-import { RenderService } from '@core/services/render.service'
+import { CategoryFilter } from '@/components/screens/home/category-filter/category-filter.component.ts'
+import { Products } from '@/components/screens/home/products/products.component.ts'
 import { TITLE_HOME } from '@/constants/titles.constants'
 import { BaseScreen } from '@/core/component/base-screen.component'
+import { RenderService } from '@/core/services/render.service'
+
 import styles from './home.module.scss'
 import template from './home.template.html?raw'
 

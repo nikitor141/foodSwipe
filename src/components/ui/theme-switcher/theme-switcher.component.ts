@@ -1,13 +1,14 @@
-import { Component } from '@core/component/component'
-import { ObserverService } from '@core/services/observer.service.ts'
-import { RenderService } from '@core/services/render.service'
-import { ThemesService } from '@core/services/themes.service.ts'
-import { Store, StoreEvent } from '@core/store/store.ts'
+import { Component } from '@/core/component/component'
+import { ObserverService } from '@/core/services/observer.service.ts'
+import { RenderService } from '@/core/services/render.service'
+import { ThemesService } from '@/core/services/themes.service.ts'
+import { Store, StoreEvent } from '@/core/store/store.ts'
+
 import styles from './theme-switcher.module.scss'
 import template from './theme-switcher.template.html?raw'
 
 export class ThemeSwitcher implements Component {
-	element: HTMLElement
+	element!: ReturnType<typeof this.render>
 	renderService: RenderService = RenderService.instance
 	observerService: ObserverService = ObserverService.instance
 	themeService: ThemesService = ThemesService.instance
@@ -17,17 +18,18 @@ export class ThemeSwitcher implements Component {
 		this.observerService.subscribe(this, [this.store])
 	}
 
-	update({ type, data }: StoreEvent): void {
+	update({ type }: StoreEvent) {
 		const isLayoutReady = this.store.state.layoutReady
 
 		switch (type) {
-			case 'layoutReady':
+			case 'layoutReady': {
 				if (isLayoutReady) this.#onLayoutReady()
 				break
-
-			case 'theme':
+			}
+			case 'theme': {
 				if (isLayoutReady) this.#onUpdate()
 				break
+			}
 		}
 	}
 

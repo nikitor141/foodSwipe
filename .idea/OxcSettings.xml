@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="OxcSettings">
+    <option name="configPath" value="./vite.config.ts" />
+    <option name="supportedExtensions">
+      <list>
+        <option value=".astro" />
+        <option value=".js" />
+        <option value=".jsx" />
+        <option value=".cjs" />
+        <option value=".mjs" />
+        <option value=".svelte" />
+        <option value=".ts" />
+        <option value=".tsx" />
+        <option value=".cts" />
+        <option value=".mts" />
+        <option value=".vue" />
+        <option value=".json" />
+      </list>
+    </option>
+  </component>
+</project>

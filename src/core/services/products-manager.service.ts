@@ -1,17 +1,17 @@
-import { DragCustomEvent } from '@core/services/drag.service.ts'
-import { NotificationService } from '@core/services/notification.service.ts'
-import { ObserverService } from '@core/services/observer.service.ts'
-import { Store } from '@core/store/store.ts'
-import { ExcludedAPI, ExcludedRuntime } from '@core/types/excluded.types.ts'
-import { WishListRuntime } from '@core/types/wishList.types.ts'
-import { debounce } from '@utils/debounce.ts'
-import { getAsObject } from '@utils/getAsObject.ts'
-import { Singleton } from '@utils/singleton.ts'
 import { AllCategories, Product, ProductsFetcherService } from '@/api/products-fetcher.service.ts'
+import { DragEndEvent } from '@/core/services/drag.types.ts'
+import { NotificationService } from '@/core/services/notification.service.ts'
+import { ObserverService } from '@/core/services/observer.service.ts'
+import { Store } from '@/core/store/store.ts'
+import { ExcludedAPI, ExcludedRuntime } from '@/core/types/excluded.types.ts'
+import { WishListRuntime } from '@/core/types/wishList.types.ts'
+import { debounce } from '@/utils/debounce.ts'
+import { getAsObject } from '@/utils/getAsObject.ts'
+import { Singleton } from '@/utils/singleton.ts'
 
 export interface ProductsManagerEvents {
-	'products-active-add': { product: Product; direction?: DragCustomEvent['detail']['direction'] }
-	'products-active-delete': { product: Product; direction?: DragCustomEvent['detail']['direction'] }
+	'products-active-add': { product: Product; direction?: DragEndEvent['detail']['direction'] }
+	'products-active-delete': { product: Product; direction?: DragEndEvent['detail']['direction'] }
 	'category-excluded': number
 	'subcategory-excluded': number
 	'category-included': number
@@ -205,7 +205,7 @@ export class ProductsManagerService extends Singleton {
 		return this.#ready
 	}
 
-	swipe(product: Product, direction: DragCustomEvent['detail']['direction']) {
+	swipe(product: Product, direction: DragEndEvent['detail']['direction']) {
 		if (direction.x === 'left') {
 			this.excluded.excludeProduct(product)
 		}
@@ -219,7 +219,7 @@ export class ProductsManagerService extends Singleton {
 		this.#ensureActiveFilled()
 	}
 
-	#mutateActive(prop: 'add' | 'delete', product: Product, direction?: DragCustomEvent['detail']['direction']) {
+	#mutateActive(prop: 'add' | 'delete', product: Product, direction?: DragEndEvent['detail']['direction']) {
 		this.#active[prop](product)
 		this.#notify(`products-active-${prop}`, { product, direction })
 	}
@@ -234,7 +234,7 @@ export class ProductsManagerService extends Singleton {
 	}, 0)
 
 	//todo notification.confirm
-	#shouldExcludeSubcategory(subCatId: number) {
+	#shouldExcludeSubcategory(/*subCatId: number*/) {
 		// return this.#excluded.productsBySubcategory.get(subCatId).size % 5 === 0
 		return false
 		// && confirm('Исключить всю подкатегорию?')

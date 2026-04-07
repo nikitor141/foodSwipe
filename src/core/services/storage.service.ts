@@ -1,4 +1,4 @@
-import { Singleton } from '@utils/singleton'
+import { Singleton } from '@/utils/singleton'
 
 export class StorageService extends Singleton {
 	protected constructor() {
@@ -22,20 +22,20 @@ export class StorageService extends Singleton {
 
 		try {
 			return JSON.parse(value)
-		} catch (e) {
+		} catch {
 			return value ?? null
 		}
 	}
 
-	setItem(key: string, value: any): void {
+	setItem(key: string, value: any) {
 		localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value))
 	}
 
-	removeItem(key: string): void {
+	removeItem(key: string) {
 		localStorage.removeItem(key)
 	}
 
-	clear(): void {
+	clear() {
 		localStorage.clear()
 	}
 }

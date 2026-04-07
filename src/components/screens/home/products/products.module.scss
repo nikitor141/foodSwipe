@@ -1,16 +1,16 @@
-@use '@/styles/functions' as f;
-@use '@/styles/variables' as *;
-@use 'sass:math';
+@use "@/styles/functions" as f;
+@use "@/styles/variables" as *;
+@use "sass:math";
 
 .products__list {
 	$stack-item-shift: -20;
 	display: grid;
-	grid-template-areas: 'stack';
+	grid-template-areas: "stack";
 	place-items: center stretch;
 	inline-size: 100%;
 	padding: f.rem(-$stack-item-shift) f.rem(15);
 	margin: 0 auto;
-	> [data-component='product-card'] {
+	> [data-component="product-card"] {
 		grid-area: stack;
 
 		&:not(:last-child) {

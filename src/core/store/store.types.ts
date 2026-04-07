@@ -1,7 +1,7 @@
-import { ScreenSingleton } from '@core/component/base-screen.types.ts'
-import { AvailableThemes } from '@core/services/themes.service.ts'
-import { ExcludedSerialized } from '@core/types/excluded.types.ts'
-import { WishListNormalized } from '@core/types/wishList.types.ts'
+import { ScreenSingleton } from '@/core/component/base-screen.types.ts'
+import { AvailableThemes } from '@/core/services/themes.service.ts'
+import { ExcludedSerialized } from '@/core/types/excluded.types.ts'
+import { WishListNormalized } from '@/core/types/wishList.types.ts'
 
 export interface StateItems {
 	theme: AvailableThemes

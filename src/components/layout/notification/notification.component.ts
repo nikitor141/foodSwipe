@@ -1,13 +1,14 @@
-import { Component } from '@core/component/component'
-import { DragService } from '@core/services/drag.service.ts'
-import { RenderService } from '@core/services/render.service'
+import { Component } from '@/core/component/component'
+import { DragService } from '@/core/services/drag.service.ts'
+import { RenderService } from '@/core/services/render.service'
+
 import styles from './notification.module.scss'
 import template from './notification.template.html?raw'
 
 export type NotificationType = 'positive' | 'negative' | 'neutral'
 
 export class Notification implements Component {
-	element: HTMLElement
+	element!: ReturnType<typeof this.render>
 	renderService: RenderService = RenderService.instance
 	dragService: DragService = DragService.instance
 	message: string
@@ -22,7 +23,7 @@ export class Notification implements Component {
 	}
 
 	// todo? #addListenersRequiredReadyDOM
-	#addListeners(): void {
+	#addListeners() {
 		this.dragService.attach(this.element, {
 			componentInstance: this,
 			direction: 'vertical',
@@ -32,7 +33,7 @@ export class Notification implements Component {
 		})
 	}
 
-	mount(parent: HTMLElement, method: 'append' | 'prepend'): void {
+	mount(parent: HTMLElement, method: 'append' | 'prepend') {
 		if (!this.element) this.element = this.render()
 
 		parent[method](this.element)
@@ -43,7 +44,7 @@ export class Notification implements Component {
 		})
 	}
 
-	destroy(): void {
+	destroy() {
 		if (this.#isDestroying) return
 
 		this.#isDestroying = true

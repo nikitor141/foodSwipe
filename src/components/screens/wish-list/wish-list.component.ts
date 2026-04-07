@@ -1,7 +1,8 @@
-import { WishProducts } from '@components/screens/wish-list/wish-products/wish-products.component.ts'
-import { RenderService } from '@core/services/render.service'
+import { WishProducts } from '@/components/screens/wish-list/wish-products/wish-products.component.ts'
 import { TITLE_WISH_LIST } from '@/constants/titles.constants'
 import { BaseScreen } from '@/core/component/base-screen.component'
+import { RenderService } from '@/core/services/render.service'
+
 import styles from './wish-list.module.scss'
 import template from './wish-list.template.html?raw'
 

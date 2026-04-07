@@ -1,4 +1,4 @@
 import '@/styles/global.scss'
-import { Router } from '@core/router/router.ts'
+import { Router } from '@/core/router/router.ts'
 
-Router.instance
+;(Router.instance as Router).init()

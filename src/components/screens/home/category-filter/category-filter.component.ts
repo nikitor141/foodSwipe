@@ -1,20 +1,22 @@
-import { FilterItem } from '@components/screens/home/category-filter/filter-item/filter-item.component.ts'
-import { Home } from '@components/screens/home/home.component.ts'
-import { CheckboxChangeEvent } from '@components/ui/checkbox/checkbox.component.ts'
-import { Component } from '@core/component/component.ts'
-import { DragCustomEvent, DragService } from '@core/services/drag.service.ts'
-import { ObserverService } from '@core/services/observer.service.ts'
-import { ProductsManagerEvent, ProductsManagerService } from '@core/services/products-manager.service.ts'
-import { RenderService } from '@core/services/render.service.ts'
-import { Store, StoreEvent } from '@core/store/store.ts'
 import { AllCategories } from '@/api/products-fetcher.service.ts'
+import { FilterItem } from '@/components/screens/home/category-filter/filter-item/filter-item.component.ts'
+import { Home } from '@/components/screens/home/home.component.ts'
+import { CheckboxChangeEvent } from '@/components/ui/checkbox/checkbox.component.ts'
+import { Component } from '@/core/component/component.ts'
+import { DragService } from '@/core/services/drag.service.ts'
+import { DragEndEvent } from '@/core/services/drag.types'
+import { ObserverService } from '@/core/services/observer.service.ts'
+import { ProductsManagerEvent, ProductsManagerService } from '@/core/services/products-manager.service.ts'
+import { RenderService } from '@/core/services/render.service.ts'
+import { Store, StoreEvent } from '@/core/store/store.ts'
+
 import styles from './category-filter.module.scss'
 import template from './category-filter.template.html?raw'
 
 type ObservableEvents = StoreEvent | ProductsManagerEvent
 
 export class CategoryFilter implements Component {
-	element: HTMLElement
+	element!: ReturnType<typeof this.render>
 	renderService: RenderService = RenderService.instance
 	observerService: ObserverService = ObserverService.instance
 	dragService: DragService = DragService.instance
@@ -31,16 +33,17 @@ export class CategoryFilter implements Component {
 		this.observerService.subscribe(this, [this.store, this.productsManagerService], Home)
 	}
 
-	update({ type, data }: ObservableEvents): void {
+	update({ type, data }: ObservableEvents) {
 		const isScreenReady = this.store.state.screenReady
-
 		switch (type) {
-			case 'screenReady':
+			case 'screenReady': {
 				if (isScreenReady) this.#onScreenReady()
 				break
-			case 'screen':
+			}
+			case 'screen': {
 				this.#filterItemsById.clear()
 				break
+			}
 			case 'category-excluded':
 			case 'subcategory-excluded':
 			case 'category-included':
@@ -84,7 +87,7 @@ export class CategoryFilter implements Component {
 		this.#addListeners()
 	}
 
-	#addListeners(): void {
+	#addListeners() {
 		this.dragService.attach(this.element, {
 			componentInstance: this,
 			direction: 'vertical',
@@ -99,7 +102,7 @@ export class CategoryFilter implements Component {
 		this.#initCheckboxesListeners()
 	}
 
-	#handleDragend = (e: DragCustomEvent<this>): void => {
+	#handleDragend = (e: DragEndEvent<this>) => {
 		if (e.detail.thresholdPassed.y) this.#toggleExpanded()
 	}
 	#toggleExpanded() {

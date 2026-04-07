@@ -1,20 +1,21 @@
-import { FilterItemSubcategoriesList } from '@components/screens/home/category-filter/filter-item/filter-item-subcategories-list/filter-item-subcategories-list.component.ts'
-import { Checkbox } from '@components/ui/checkbox/checkbox.component.ts'
-import { Component } from '@core/component/component'
-import { ProductsManagerEvents, ProductsManagerService } from '@core/services/products-manager.service.ts'
-import { RenderService } from '@core/services/render.service'
 import { Category, Subcategory } from '@/api/products-fetcher.service.ts'
+import { FilterItemSubcategoriesList } from '@/components/screens/home/category-filter/filter-item/filter-item-subcategories-list/filter-item-subcategories-list.component.ts'
+import { Checkbox } from '@/components/ui/checkbox/checkbox.component.ts'
+import { Component } from '@/core/component/component'
+import { ProductsManagerEvents, ProductsManagerService } from '@/core/services/products-manager.service.ts'
+import { RenderService } from '@/core/services/render.service'
+
 import styles from './filter-item.module.scss'
 import template from './filter-item.template.html?raw'
 
 export class FilterItem implements Component {
 	static #instancesByElement = new WeakMap<HTMLElement, FilterItem>()
 
-	static from(element: HTMLElement): FilterItem {
+	static from(element: HTMLElement) {
 		return this.#instancesByElement.get(element)
 	}
 
-	element: HTMLElement
+	element!: ReturnType<typeof this.render>
 	renderService: RenderService = RenderService.instance
 	productsManagerService: ProductsManagerService = ProductsManagerService.instance
 
@@ -35,7 +36,7 @@ export class FilterItem implements Component {
 		if (parent) this.parent = parent
 	}
 
-	mount(parent: HTMLElement, method: 'append' | 'prepend'): void {
+	mount(parent: HTMLElement, method: 'append' | 'prepend') {
 		if (!this.element) this.element = this.render()
 
 		FilterItem.#instancesByElement.set(this.element, this)

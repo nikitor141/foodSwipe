@@ -1,7 +1,7 @@
-import { ComponentConstructor } from '@core/component/component'
-import { imgToPicture } from '@utils/imgToPicture'
-import { isNumeric } from '@utils/isNumeric'
-import { Singleton } from '@utils/singleton'
+import { ComponentConstructor } from '@/core/component/component'
+import { imgToPicture } from '@/utils/imgToPicture'
+import { isNumeric } from '@/utils/isNumeric'
+import { Singleton } from '@/utils/singleton'
 
 export class RenderService extends Singleton {
 	protected constructor() {
@@ -58,7 +58,7 @@ export class RenderService extends Singleton {
 		}
 	}
 
-	#applyModuleStyles(moduleStyles: CSSModuleClasses, rootElement: Element): void {
+	#applyModuleStyles(moduleStyles: CSSModuleClasses, rootElement: Element) {
 		const allChildrenElements = rootElement.querySelectorAll('*')
 		applyStyles(rootElement)
 		allChildrenElements.forEach(applyStyles)

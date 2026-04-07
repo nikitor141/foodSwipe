@@ -1,6 +1,6 @@
-import { ExcludedAPI } from '@core/types/excluded.types.ts'
-import { Singleton } from '@utils/singleton'
 import { ALL_CATEGORIES_URL, PRODUCT_BY_ID_URL, RANDOM_PRODUCT_URL, SERVER_URL } from '@/config/url.config'
+import { ExcludedAPI } from '@/core/types/excluded.types.ts'
+import { Singleton } from '@/utils/singleton'
 
 export interface Product {
 	categoryId: number

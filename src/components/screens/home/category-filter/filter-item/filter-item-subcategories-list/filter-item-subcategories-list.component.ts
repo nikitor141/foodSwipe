@@ -1,5 +1,6 @@
-import { Component } from '@core/component/component'
-import { RenderService } from '@core/services/render.service'
+import { Component } from '@/core/component/component'
+import { RenderService } from '@/core/services/render.service'
+
 import styles from './filter-item-subcategories-list.module.scss'
 import template from './filter-item-subcategories-list.template.html?raw'
 

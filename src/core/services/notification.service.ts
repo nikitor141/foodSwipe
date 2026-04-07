@@ -1,7 +1,7 @@
-import { Notification, NotificationType } from '@components/layout/notification/notification.component'
-import { DragCustomEvent } from '@core/services/drag.service.ts'
-import { Singleton } from '@utils/singleton'
+import { Notification, NotificationType } from '@/components/layout/notification/notification.component'
 import { SELECTOR_NOTIFICATIONS_LIST } from '@/constants/selectors.constants'
+import { DragCustomEvent } from '@/core/services/drag.types.ts'
+import { Singleton } from '@/utils/singleton'
 
 export class NotificationService extends Singleton {
 	#queue: Notification[] = []
@@ -13,7 +13,7 @@ export class NotificationService extends Singleton {
 		super()
 	}
 
-	show(message: string, type: NotificationType = 'neutral'): void {
+	show(message: string, type: NotificationType = 'neutral') {
 		const notif = new Notification(message, type)
 		if (this.#active.size >= this.#limit) {
 			this.#queue.push(notif)

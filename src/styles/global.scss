@@ -1,8 +1,8 @@
-@use 'reset';
-@use 'variables' as *;
-@use 'functions' as f;
-@use 'mixins' as m;
-@use 'colors';
+@use "reset";
+@use "variables" as *;
+@use "functions" as f;
+@use "mixins" as m;
+@use "colors";
 
 //	snippets -----------------------------------------------
 // fsc - fullscreen;
@@ -27,10 +27,10 @@ video {
 html {
 	--refRes: 1920;
 	$ratio: 0.5;
+	scroll-behavior: smooth;
 	overscroll-behavior: none;
 	font-size: calc(100vw / var(--refRes) * 10);
 	accent-color: f.cl($cd-accent);
-	scroll-behavior: smooth;
 
 	@media (min-width: 1921px) {
 		font-size: calc(10px + ($ratio * 10) * ((100vw - var(--refRes) * 1px) / var(--refRes)));

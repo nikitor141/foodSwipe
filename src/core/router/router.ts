@@ -1,11 +1,11 @@
-import { ScreenSingleton } from '@core/component/base-screen.types.ts'
-import { ROUTES } from '@core/router/routes.data.ts'
-import { NotificationService } from '@core/services/notification.service'
-import { ObserverService } from '@core/services/observer.service.ts'
-import { Store } from '@core/store/store.ts'
 import { Layout } from '@/components/layout/layout.component'
 import { MESSAGE_REDIRECTED } from '@/constants/messages.constants'
 import { HOME_URL } from '@/constants/routes.constants'
+import { ScreenSingleton } from '@/core/component/base-screen.types.ts'
+import { ROUTES } from '@/core/router/routes.data.ts'
+import { NotificationService } from '@/core/services/notification.service'
+import { ObserverService } from '@/core/services/observer.service.ts'
+import { Store } from '@/core/store/store.ts'
 import { Singleton } from '@/utils/singleton'
 
 export class Router extends Singleton {
@@ -19,7 +19,9 @@ export class Router extends Singleton {
 
 	protected constructor() {
 		super()
+	}
 
+	init() {
 		window.addEventListener('popstate', () => {
 			this.#handleRouteChange()
 		})
@@ -34,21 +36,23 @@ export class Router extends Singleton {
 	}
 
 	#isExternalLink(path: string): boolean {
-		try {
-			return new URL(path, location.origin).hostname !== location.hostname
-		} catch (e) {
-			return false
-		}
+		if (!path) return false
+
+		return (
+			path.startsWith('mailto:') ||
+			path.startsWith('tel:') ||
+			new URL(path, location.origin).hostname !== location.hostname
+		)
 	}
 
-	navigate(path: string): void {
+	navigate(path: string) {
 		if (path === this.getCurrentPath()) return
 
 		history.pushState({}, '', path)
 		this.#handleRouteChange()
 	}
 
-	#handleRouteChange(): void {
+	#handleRouteChange() {
 		const path: string = this.getCurrentPath()
 
 		const previousRoute = this.#currentRoute
@@ -70,7 +74,7 @@ export class Router extends Singleton {
 		this.#render()
 	}
 
-	#handleLinks(): void {
+	#handleLinks() {
 		document.addEventListener('click', (e: PointerEvent) => {
 			const target = e.target as HTMLElement | null
 
@@ -82,7 +86,7 @@ export class Router extends Singleton {
 		})
 	}
 
-	#render(): void {
+	#render() {
 		this.#layout.setScreen(this.#currentRoute)
 	}
 }

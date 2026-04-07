@@ -1,4 +1,4 @@
-import { ImagesStore } from '@core/store/images.store'
+import { ImagesStore } from '@/core/store/images.store'
 
 export function imgToPicture(tag: HTMLImageElement): HTMLPictureElement {
 	const imageStore: ImagesStore = ImagesStore.instance

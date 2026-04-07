@@ -17,7 +17,7 @@
 }
 
 @keyframes bounce {
-	from {
+	0% {
 		transform: scale(0.2);
 	}
 
@@ -25,7 +25,7 @@
 		transform: scale(1.4);
 	}
 
-	to {
+	100% {
 		transform: scale(1);
 	}
 }
@@ -44,7 +44,7 @@
 }
 
 @keyframes rotate {
-	from {
+	0% {
 		transform: rotate(58deg);
 	}
 
@@ -52,7 +52,7 @@
 		transform: rotate(-40deg);
 	}
 
-	to {
+	100% {
 		transform: rotate(0);
 	}
 }

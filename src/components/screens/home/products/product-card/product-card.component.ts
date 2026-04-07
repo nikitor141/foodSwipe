@@ -1,13 +1,15 @@
-import { Component } from '@core/component/component.ts'
-import { DragConfig, DragCustomEvent, DragService } from '@core/services/drag.service.ts'
-import { ProductsManagerService } from '@core/services/products-manager.service.ts'
-import { RenderService } from '@core/services/render.service.ts'
 import { Product } from '@/api/products-fetcher.service.ts'
+import { Component } from '@/core/component/component.ts'
+import { DragService } from '@/core/services/drag.service.ts'
+import { DragConfig, DragEndEvent, DragMoveEvent } from '@/core/services/drag.types'
+import { ProductsManagerService } from '@/core/services/products-manager.service.ts'
+import { RenderService } from '@/core/services/render.service.ts'
+
 import styles from './product-card.module.scss'
 import template from './product-card.template.html?raw'
 
 export class ProductCard implements Component {
-	element: HTMLElement
+	element!: ReturnType<typeof this.render>
 	renderService: RenderService = RenderService.instance
 	dragService: DragService = DragService.instance
 	productsManagerService: ProductsManagerService = ProductsManagerService.instance
@@ -36,7 +38,7 @@ export class ProductCard implements Component {
 		this.draggable = config.draggable
 	}
 
-	#handleDragMove = (e: DragCustomEvent<this>): void => {
+	#handleDragMove = (e: DragMoveEvent<this, 'x'>) => {
 		const dx = e.detail.elementDelta.center.x
 
 		const t = Math.min(1, Math.abs(dx) / this.dragConfig.threshold)
@@ -61,7 +63,7 @@ export class ProductCard implements Component {
 		}
 	}
 
-	#handleDragend = (e: DragCustomEvent<this>): void => {
+	#handleDragend = (e: DragEndEvent<this>) => {
 		this.element.style.removeProperty('--card-gradient-negative-opacity')
 		this.element.style.removeProperty('--card-gradient-positive-opacity')
 		this.element.style.removeProperty('--card-gradient-positive-end')
@@ -76,14 +78,14 @@ export class ProductCard implements Component {
 	}
 
 	//todo? #addListenersRequiredReadyDOM
-	#addListeners(): void {
+	#addListeners() {
 		this.dragService.attach(this.element, this.dragConfig)
 
 		this.element.addEventListener('dragmove', this.#handleDragMove)
 		this.element.addEventListener('dragend', this.#handleDragend)
 	}
 
-	mount(parent: HTMLElement, method: 'append' | 'prepend'): void {
+	mount(parent: HTMLElement, method: 'append' | 'prepend') {
 		if (!this.element) this.element = this.render()
 
 		ProductCard.#instancesByElement.set(this.element, this)
@@ -98,7 +100,7 @@ export class ProductCard implements Component {
 		})
 	}
 
-	destroy(direction?: DragCustomEvent['detail']['direction']) {
+	destroy(direction?: DragEndEvent<this>['detail']['direction']) {
 		if (this.#isDestroying) return
 		this.#isDestroying = true
 

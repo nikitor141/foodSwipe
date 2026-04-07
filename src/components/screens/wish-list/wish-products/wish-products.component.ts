@@ -1,11 +1,12 @@
-import { ProductCard } from '@components/screens/home/products/product-card/product-card.component.ts'
-import { WishList } from '@components/screens/wish-list/wish-list.component.ts'
-import { WishProductsListItemComponent } from '@components/screens/wish-list/wish-products/wish-products-list-item/wish-products-list-item.component.ts'
-import { Component } from '@core/component/component'
-import { ObserverService } from '@core/services/observer.service.ts'
-import { ProductsManagerEvent, ProductsManagerService } from '@core/services/products-manager.service.ts'
-import { RenderService } from '@core/services/render.service'
 import { Product } from '@/api/products-fetcher.service.ts'
+import { ProductCard } from '@/components/screens/home/products/product-card/product-card.component.ts'
+import { WishList } from '@/components/screens/wish-list/wish-list.component.ts'
+import { WishProductsListItemComponent } from '@/components/screens/wish-list/wish-products/wish-products-list-item/wish-products-list-item.component.ts'
+import { Component } from '@/core/component/component'
+import { ObserverService } from '@/core/services/observer.service.ts'
+import { ProductsManagerEvent, ProductsManagerService } from '@/core/services/products-manager.service.ts'
+import { RenderService } from '@/core/services/render.service'
+
 import styles from './wish-products.module.scss'
 import template from './wish-products.template.html?raw'
 
@@ -32,10 +33,11 @@ export class WishProducts implements Component {
 
 	update({ type, data }: ProductsManagerEvent) {
 		switch (type) {
-			case 'products-manager-ready':
+			case 'products-manager-ready': {
 				this.#fill()
 				break
-			case 'wish-list-removed':
+			}
+			case 'wish-list-removed': {
 				const { productCard, li } = this.#items.get(data.product)
 				this.#selectedLiElements.delete(li.element as HTMLLIElement)
 				this.#items.delete(data.product)
@@ -43,7 +45,8 @@ export class WishProducts implements Component {
 				productCard.destroy()
 				li.destroy()
 				break
-			case 'wish-list-cleared':
+			}
+			case 'wish-list-cleared': {
 				for (const { productCard, li } of this.#items.values()) {
 					productCard.destroy()
 					li.destroy()
@@ -52,6 +55,7 @@ export class WishProducts implements Component {
 				this.#items.clear()
 				this.#selectedLiElements.clear()
 				break
+			}
 		}
 	}
 
@@ -61,13 +65,15 @@ export class WishProducts implements Component {
 		this.#updateClearBtnIcon()
 
 		switch (mode) {
-			case 'view':
+			case 'view': {
 				this.element.removeEventListener('click', this.#handleLiClick)
 				this.#selectedLiElements.clear()
 				break
-			case 'edit':
+			}
+			case 'edit': {
 				this.element.addEventListener('click', this.#handleLiClick)
 				break
+			}
 		}
 	}
 
@@ -101,16 +107,18 @@ export class WishProducts implements Component {
 
 	#handleClearBtnClick = () => {
 		switch (this.#mode) {
-			case 'view':
+			case 'view': {
 				this.productsManagerService.wishList.clear()
 				break
-			case 'edit':
+			}
+			case 'edit': {
 				this.#selectedLiElements.forEach(li => {
 					const product = this.#productsByLiElements.get(li)
 					const { productCard } = this.#items.get(product)
 					this.productsManagerService.wishList.remove(productCard.product)
 				})
 				break
+			}
 		}
 		this.#setMode('view')
 	}
@@ -132,19 +140,20 @@ export class WishProducts implements Component {
 		liEl.dataset.selected = String(!isSelected)
 
 		this.#updateClearBtnIcon()
-		console.log(this.#selectedLiElements)
 	}
 	#updateClearBtnIcon() {
-		const useEl = this.element.querySelector('use')
+		const useEl = this.element.querySelector('use')!
 		switch (this.#mode) {
-			case 'view':
+			case 'view': {
 				useEl.setAttribute('href', '#remove')
 				break
-			case 'edit':
+			}
+			case 'edit': {
 				this.#selectedLiElements.size === 0
 					? useEl.setAttribute('href', '#cancel')
 					: useEl.setAttribute('href', '#remove')
 				break
+			}
 		}
 	}
 

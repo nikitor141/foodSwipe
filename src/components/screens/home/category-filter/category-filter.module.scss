@@ -1,13 +1,13 @@
-@use '@/styles/functions' as f;
-@use '@/styles/variables' as *;
-@use '@/styles/mixins' as m;
-@use '@/styles/keyframes' as *;
+@use "@/styles/functions" as f;
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as m;
+@use "@/styles/keyframes" as *;
 
 .category-filter {
 	@include m.glassyBorder(45deg);
-
 	position: fixed;
 	z-index: 2;
+
 	//flex нужен, чтобы размер &__list был не больше чем доступное пространство и прокручивался
 	display: flex;
 	flex-direction: column;
@@ -22,22 +22,22 @@
 		top 0.4s,
 		background-color 0.4s;
 
-	[data-theme='light'] & {
+	[data-theme="light"] & {
 		backdrop-filter: $liquid-blur-l;
 	}
 
-	[data-theme='dark'] &[aria-expanded='true'] {
+	[data-theme="dark"] &[aria-expanded="true"] {
 		background-color: f.cl($cd-glass-background, $a: 0.65, $l: 0);
 	}
 
-	&[data-dragging='true'] {
+	&[data-dragging="true"] {
 		transition: none;
 	}
 
-	&[aria-expanded='true'] {
+	&[aria-expanded="true"] {
 		top: 8dvh;
 	}
-	&[aria-expanded='false'] {
+	&[aria-expanded="false"] {
 		top: calc(100dvh - f.rem(24));
 	}
 
@@ -49,7 +49,7 @@
 			inline-size: f.rem(40);
 			block-size: f.rem(4);
 			margin-inline: auto;
-			content: '';
+			content: "";
 			background-color: f.cl($cd-accent, $a: 0.25);
 			border-radius: f.rem(2);
 		}

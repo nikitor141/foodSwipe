@@ -1,5 +1,6 @@
-import { Component } from '@core/component/component'
-import { RenderService } from '@core/services/render.service'
+import { Component } from '@/core/component/component'
+import { RenderService } from '@/core/services/render.service'
+
 import styles from './checkbox.module.scss'
 import template from './checkbox.template.html?raw'
 
@@ -14,7 +15,7 @@ export class Checkbox implements Component {
 
 	static isEventsDelegated: boolean = false
 
-	element: HTMLElement
+	element!: ReturnType<typeof this.render>
 	renderService: RenderService = RenderService.instance
 	text: string
 	interactiveLabel: boolean
@@ -30,7 +31,7 @@ export class Checkbox implements Component {
 		this.interactiveLabel = interactiveLabel
 	}
 
-	#addListeners(): void {
+	#addListeners() {
 		document.addEventListener('change', e => {
 			const target = e.target as HTMLInputElement | null
 			if (!target?.closest('input')) return
@@ -67,7 +68,7 @@ export class Checkbox implements Component {
 		Checkbox.isEventsDelegated = true
 	}
 
-	mount(parent: HTMLElement, method: 'append' | 'prepend'): void {
+	mount(parent: HTMLElement, method: 'append' | 'prepend') {
 		if (!this.element) this.element = this.render()
 
 		Checkbox.#instancesByElement.set(this.element, this)
@@ -75,11 +76,11 @@ export class Checkbox implements Component {
 		parent[method](this.element)
 	}
 
-	toggleStatus(): void {
+	toggleStatus() {
 		this.setStatus(!this.status)
 	}
 
-	setStatus(status: boolean): void {
+	setStatus(status: boolean) {
 		if (status === this.status) return
 
 		this.status = status
@@ -87,7 +88,7 @@ export class Checkbox implements Component {
 		this.#input.dispatchEvent(new Event('change', { bubbles: true }))
 	}
 
-	setIndeterminate(indeterminate: boolean): void {
+	setIndeterminate(indeterminate: boolean) {
 		if (indeterminate === this.indeterminate) return
 
 		this.indeterminate = indeterminate

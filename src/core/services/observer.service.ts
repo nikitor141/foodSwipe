@@ -1,6 +1,6 @@
-import { ScreenSingleton } from '@core/component/base-screen.types.ts'
-import { StateItems } from '@core/store/store.types.ts'
-import { Singleton } from '@utils/singleton.ts'
+import { ScreenSingleton } from '@/core/component/base-screen.types.ts'
+import { StateItems } from '@/core/store/store.types.ts'
+import { Singleton } from '@/utils/singleton.ts'
 
 export interface ObservableEvent<T extends string = string, D = any> {
 	type: T

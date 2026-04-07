@@ -1,13 +1,14 @@
-import { ThemeSwitcher } from '@components/ui/theme-switcher/theme-switcher.component.ts'
-import { Component } from '@core/component/component'
-import { ObserverService } from '@core/services/observer.service.ts'
-import { RenderService } from '@core/services/render.service'
-import { Store, StoreEvent } from '@core/store/store.ts'
+import { ThemeSwitcher } from '@/components/ui/theme-switcher/theme-switcher.component.ts'
+import { Component } from '@/core/component/component'
+import { ObserverService } from '@/core/services/observer.service.ts'
+import { RenderService } from '@/core/services/render.service'
+import { Store, StoreEvent } from '@/core/store/store.ts'
+
 import styles from './header.module.scss'
 import template from './header.template.html?raw'
 
 export class Header implements Component {
-	element: HTMLElement
+	element!: ReturnType<typeof this.render>
 	renderService: RenderService = RenderService.instance
 	observerService: ObserverService = ObserverService.instance
 	store: Store = Store.instance
@@ -16,18 +17,20 @@ export class Header implements Component {
 		this.observerService.subscribe(this, [this.store])
 	}
 
-	update({ type, data }: StoreEvent): void {
+	update({ type }: StoreEvent) {
 		// screen приходит раньше layoutReady, и до рендера, поэтому при загрузке страницы screen не передастся сюда, ибо header еще не успел стать
 		// обсервером в store
 		const isLayoutReady = this.store.state.layoutReady
 
 		switch (type) {
-			case 'layoutReady':
+			case 'layoutReady': {
 				if (isLayoutReady) this.#onLayoutReady()
 				break
-			case 'screen':
+			}
+			case 'screen': {
 				if (isLayoutReady) this.#onUpdate()
 				break
+			}
 		}
 	}
 

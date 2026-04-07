@@ -1,5 +1,6 @@
-import { Component } from '@core/component/component'
-import { RenderService } from '@core/services/render.service'
+import { Component } from '@/core/component/component'
+import { RenderService } from '@/core/services/render.service'
+
 import styles from './wish-products-list-item.module.scss'
 import template from './wish-products-list-item.template.html?raw'
 
