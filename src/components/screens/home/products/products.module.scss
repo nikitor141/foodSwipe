@@ -2,41 +2,43 @@
 @use "@/styles/variables" as *;
 @use "sass:math";
 
-.products__list {
-	$stack-item-shift: -20;
-	display: grid;
-	grid-template-areas: "stack";
-	place-items: center stretch;
-	inline-size: 100%;
-	padding: f.rem(-$stack-item-shift) f.rem(15);
-	margin: 0 auto;
-	> [data-component="product-card"] {
-		grid-area: stack;
+.products {
+	&__list {
+		$stack-item-shift: -20;
+		display: grid;
+		grid-template-areas: "stack";
+		place-items: center stretch;
+		inline-size: 100%;
+		padding: f.rem(-$stack-item-shift) f.rem(15);
+		margin: 0 auto;
+		> [data-component="product-card"] {
+			grid-area: stack;
 
-		&:not(:last-child) {
-			pointer-events: none;
-		}
-
-		&:nth-child(1) {
-			translate: 0 f.rem($stack-item-shift);
-
-			> * {
-				opacity: 0;
+			&:not(:last-child) {
+				pointer-events: none;
 			}
-		}
 
-		&:nth-child(2) {
-			translate: 0 f.rem(math.div($stack-item-shift, 2));
-			> * {
-				opacity: 0.5;
+			&:nth-child(1) {
+				translate: 0 f.rem($stack-item-shift);
+
+				> * {
+					opacity: 0;
+				}
 			}
-		}
 
-		&:nth-child(3) {
-			translate: 0 f.rem(0);
+			&:nth-child(2) {
+				translate: 0 f.rem(math.div($stack-item-shift, 2));
+				> * {
+					opacity: 0.5;
+				}
+			}
 
-			> * {
-				opacity: 1;
+			&:nth-child(3) {
+				translate: 0 f.rem(0);
+
+				> * {
+					opacity: 1;
+				}
 			}
 		}
 	}

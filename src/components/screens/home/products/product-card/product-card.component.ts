@@ -56,7 +56,7 @@ export class ProductCard implements Component {
 		}
 
 		this.element.style.rotate = dx * 0.05 + 'deg'
-		this.element.style.opacity = `${lerp(1, 0.8, t)}`
+		this.element.style.opacity = `${lerp(1, 0.9, t)}`
 
 		function lerp(start: number, end: number, t: number) {
 			return start + (end - start) * t

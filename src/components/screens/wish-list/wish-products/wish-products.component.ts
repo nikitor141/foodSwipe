@@ -61,7 +61,7 @@ export class WishProducts implements Component {
 
 	#setMode(mode: Mode) {
 		this.#mode = mode
-		this.productsListEl.dataset.wishProductsListMode = mode
+		this.productsListEl.dataset['wishProductsListMode'] = mode
 		this.#updateClearBtnIcon()
 
 		switch (mode) {
@@ -170,13 +170,13 @@ export class WishProducts implements Component {
 			this.#items.set(product, { productCard, li })
 			this.#productsByLiElements.set(li.element as HTMLLIElement, product)
 		}
-		requestAnimationFrame(() => requestAnimationFrame(() => (this.element.dataset.ready = 'true')))
+		requestAnimationFrame(() => requestAnimationFrame(() => (this.element.dataset['ready'] = 'true')))
 	}
 
 	render() {
 		this.element = this.renderService.htmlToElement(template, [], styles) as HTMLElement
-		this.productsListEl = this.element.querySelector(`.${styles['wish-products__list']}`)
-		this.clearBtn = this.element.querySelector(`.${styles['wish-products__clear-button']}`)
+		this.productsListEl = this.element.querySelector<HTMLUListElement>(`.${styles['wish-products__list']}`)!
+		this.clearBtn = this.element.querySelector<HTMLButtonElement>(`.${styles['wish-products__clear-button']}`)!
 
 		if (this.productsManagerService.isReady()) this.#fill()
 
