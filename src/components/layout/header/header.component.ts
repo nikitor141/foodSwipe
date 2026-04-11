@@ -8,6 +8,8 @@ import styles from './header.module.scss'
 import template from './header.template.html?raw'
 
 export class Header implements Component {
+	static componentName = 'component-header'
+
 	element!: ReturnType<typeof this.render>
 	renderService: RenderService = RenderService.instance
 	observerService: ObserverService = ObserverService.instance

@@ -12,6 +12,8 @@ import template from './wish-products.template.html?raw'
 
 type Mode = 'view' | 'edit'
 export class WishProducts implements Component {
+	static componentName = 'component-wish-products'
+
 	element: HTMLElement
 	productsListEl!: HTMLElement
 	clearBtn!: HTMLElement

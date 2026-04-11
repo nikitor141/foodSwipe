@@ -3,6 +3,31 @@
 @use "@/styles/mixins" as m;
 
 .notification {
+	&--positive {
+		@include m.glassyBorder(
+			0deg f.rem(1),
+			$colors: (f.cl($cd-positive), transparent, transparent, f.cl($cd-positive)),
+			$animate: true
+		);
+	}
+
+	&--neutral {
+		@include m.glassyBorder(
+			0deg f.rem(1),
+			$colors: (f.cl($cd-accent), transparent, transparent, f.cl($cd-accent)),
+			$animate: true
+		);
+	}
+
+	&--negative {
+		@include m.glassyBorder(
+			0deg,
+			f.rem(1),
+			$colors: (f.cl($cd-negative, $a: 0.5), transparent, transparent, f.cl($cd-negative, $a: 0.5)),
+			$animate: true
+		);
+	}
+
 	position: absolute;
 	top: f.rem(24); //тут не надо, надо в list todo
 	left: 0;
@@ -38,31 +63,6 @@
 	}
 	&[data-dragging="true"] {
 		transition: none;
-	}
-
-	&--positive {
-		@include m.glassyBorder(
-			0deg f.rem(1),
-			$colors: (f.cl($cd-positive), transparent, transparent, f.cl($cd-positive)),
-			$animate: true
-		);
-	}
-
-	&--neutral {
-		@include m.glassyBorder(
-			0deg f.rem(1),
-			$colors: (f.cl($cd-accent), transparent, transparent, f.cl($cd-accent)),
-			$animate: true
-		);
-	}
-
-	&--negative {
-		@include m.glassyBorder(
-			0deg,
-			f.rem(1),
-			$colors: (f.cl($cd-negative, $a: 0.5), transparent, transparent, f.cl($cd-negative, $a: 0.5)),
-			$animate: true
-		);
 	}
 
 	&--vanishing {

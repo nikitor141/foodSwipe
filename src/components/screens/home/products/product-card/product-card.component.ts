@@ -9,6 +9,8 @@ import styles from './product-card.module.scss'
 import template from './product-card.template.html?raw'
 
 export class ProductCard implements Component {
+	static componentName = 'component-product-card'
+
 	element!: ReturnType<typeof this.render>
 	renderService: RenderService = RenderService.instance
 	dragService: DragService = DragService.instance

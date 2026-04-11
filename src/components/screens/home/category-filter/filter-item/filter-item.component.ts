@@ -15,6 +15,8 @@ export class FilterItem implements Component {
 		return this.#instancesByElement.get(element)
 	}
 
+	static componentName = 'component-filter-item'
+
 	element!: ReturnType<typeof this.render>
 	renderService: RenderService = RenderService.instance
 	productsManagerService: ProductsManagerService = ProductsManagerService.instance
@@ -22,7 +24,7 @@ export class FilterItem implements Component {
 	category: Category | Subcategory
 	parent?: FilterItem
 	children: FilterItem[] = []
-	checkbox: Checkbox
+	checkbox!: Checkbox
 	subcategories?: Subcategory[]
 	subcategoriesList?: FilterItemSubcategoriesList
 	isParent: boolean = false

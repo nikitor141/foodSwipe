@@ -10,6 +10,8 @@ import styles from './products.module.scss'
 import template from './products.template.html?raw'
 
 export class Products implements Component {
+	static componentName = 'component-products'
+
 	element!: ReturnType<typeof this.render>
 	renderService: RenderService = RenderService.instance
 	productsManagerService: ProductsManagerService = ProductsManagerService.instance

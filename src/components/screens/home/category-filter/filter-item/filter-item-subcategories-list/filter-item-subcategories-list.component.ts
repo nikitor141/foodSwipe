@@ -5,7 +5,9 @@ import styles from './filter-item-subcategories-list.module.scss'
 import template from './filter-item-subcategories-list.template.html?raw'
 
 export class FilterItemSubcategoriesList implements Component {
-	element: HTMLElement
+	static componentName = 'component-filter-item-subcategories-list'
+
+	element!: HTMLElement
 	renderService: RenderService = RenderService.instance
 
 	mount(parent: HTMLElement, method: 'append' | 'prepend') {

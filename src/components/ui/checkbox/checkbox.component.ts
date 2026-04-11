@@ -14,6 +14,7 @@ export class Checkbox implements Component {
 	}
 
 	static isEventsDelegated: boolean = false
+	static componentName = 'component-checkbox'
 
 	element!: ReturnType<typeof this.render>
 	renderService: RenderService = RenderService.instance

@@ -11,6 +11,8 @@ import styles from './layout.module.scss'
 import template from './layout.template.html?raw'
 
 export class Layout extends Singleton implements Component {
+	static componentName = 'component-layout'
+
 	element!: ReturnType<typeof this.render>
 	renderService: RenderService = RenderService.instance
 	themeService: ThemesService = ThemesService.instance

@@ -34,8 +34,9 @@ export class NotificationService extends Singleton {
 
 		this.#setNotifTimeout(notif)
 	}
+
 	#setNotifTimeout(notif: Notification) {
-		notif.timeout = setTimeout(() => this.#destroyNotif(notif), 3000)
+		notif.timeout = setTimeout(() => this.#destroyNotif(notif), 300000)
 	}
 
 	#destroyNotif(notif: Notification) {

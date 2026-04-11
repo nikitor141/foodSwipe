@@ -8,13 +8,15 @@ import template from './notification.template.html?raw'
 export type NotificationType = 'positive' | 'negative' | 'neutral'
 
 export class Notification implements Component {
+	static componentName = 'component-notification'
+
 	element!: ReturnType<typeof this.render>
 	renderService: RenderService = RenderService.instance
 	dragService: DragService = DragService.instance
 	message: string
 	type: NotificationType
 
-	timeout: ReturnType<typeof setTimeout>
+	timeout!: ReturnType<typeof setTimeout>
 	#isDestroying: boolean = false
 
 	constructor(message: string, type: NotificationType) {

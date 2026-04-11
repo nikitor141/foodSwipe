@@ -8,6 +8,8 @@ import styles from './theme-switcher.module.scss'
 import template from './theme-switcher.template.html?raw'
 
 export class ThemeSwitcher implements Component {
+	static componentName = 'component-theme-switcher'
+
 	element!: ReturnType<typeof this.render>
 	renderService: RenderService = RenderService.instance
 	observerService: ObserverService = ObserverService.instance

@@ -5,7 +5,9 @@ import styles from './wish-products-list-item.module.scss'
 import template from './wish-products-list-item.template.html?raw'
 
 export class WishProductsListItemComponent implements Component {
-	element: HTMLElement
+	static componentName = 'component-wish-products-list-item'
+
+	element!: HTMLElement
 	renderService: RenderService = RenderService.instance
 	#isDestroying: boolean = false
 

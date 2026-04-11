@@ -17,7 +17,7 @@ export class RenderService extends Singleton {
 		template.innerHTML = html.trim()
 
 		if (template.content.children.length > 1) throw new Error('HTML template must have a single root element')
-		const rootElement: Element = template.content.firstElementChild
+		const rootElement: Element = template.content.firstElementChild!
 
 		if (styles) this.#applyModuleStyles(styles, rootElement)
 
@@ -43,8 +43,7 @@ export class RenderService extends Singleton {
 			const elementTagName = element.tagName.toLowerCase()
 			if (!componentTagPattern.test(elementTagName)) continue
 
-			const componentName = elementTagName.replace(componentTagPattern, '').replace(/-/g, '')
-			const foundComponent = components.find(component => component.name.toLowerCase() === componentName)
+			const foundComponent = components.find(component => component.componentName === elementTagName)
 			if (!foundComponent) continue
 
 			let attributes: Record<string, unknown> = {}

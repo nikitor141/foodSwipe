@@ -16,6 +16,8 @@ import template from './category-filter.template.html?raw'
 type ObservableEvents = StoreEvent | ProductsManagerEvent
 
 export class CategoryFilter implements Component {
+	static componentName = 'component-category-filter'
+
 	element!: ReturnType<typeof this.render>
 	renderService: RenderService = RenderService.instance
 	observerService: ObserverService = ObserverService.instance
@@ -119,12 +121,11 @@ export class CategoryFilter implements Component {
 		this.#allCategories = await this.productsManagerService.getAllCategories()
 
 		for (const category of Object.values(this.#allCategories.categories)) {
-			// Прохожу по каждой категории
 			const subcategories = category.subcategory_ids.map(
 				subcategory_id => this.#allCategories.subcategories[subcategory_id]
-			) // Из id записанных в категории получаю объекты подкатегории из другого объекта
-
+			)
 			const parentFilterItem = new FilterItem(category, subcategories)
+
 			parentFilterItem.mount(this.#categoriesContainer, 'append')
 			this.#filterItemsById.set(parentFilterItem.category.id, parentFilterItem)
 

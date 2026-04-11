@@ -8,6 +8,8 @@ import styles from './home.module.scss'
 import template from './home.template.html?raw'
 
 export class Home extends BaseScreen {
+	static componentName = 'component-home'
+
 	element: HTMLElement
 	renderService: RenderService = RenderService.instance
 	path!: string
