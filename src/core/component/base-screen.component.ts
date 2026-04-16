@@ -1,9 +1,9 @@
 import { getTitle } from '@/config/seo.config'
-import { Component } from '@/core/component/component.ts'
+import { StaticComponent } from '@/core/component/component.ts'
 import { RenderService } from '@/core/services/render.service'
 import { Singleton } from '@/utils/singleton.ts'
 
-export abstract class BaseScreen extends Singleton implements Component {
+export abstract class BaseScreen extends Singleton implements StaticComponent {
 	abstract element: HTMLElement
 	abstract renderService: RenderService
 	abstract path: string

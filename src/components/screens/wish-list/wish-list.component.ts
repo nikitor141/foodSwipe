@@ -21,8 +21,8 @@ export class WishList extends BaseScreen {
 		super.setTitle({ title: TITLE_WISH_LIST })
 	}
 
-	render(): HTMLElement {
-		this.element = this.renderService.htmlToElement(template, [WishProducts], styles) as HTMLElement
+	render() {
+		this.element = this.renderService.htmlToElement(template, [WishProducts], styles)
 
 		return this.element
 	}

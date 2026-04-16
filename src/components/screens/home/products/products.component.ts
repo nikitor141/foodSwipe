@@ -1,7 +1,7 @@
 import { Product } from '@/api/products-fetcher.service.ts'
 import { Home } from '@/components/screens/home/home.component.ts'
 import { ProductCard } from '@/components/screens/home/products/product-card/product-card.component.ts'
-import { Component } from '@/core/component/component'
+import { StaticComponent } from '@/core/component/component'
 import { ObserverService } from '@/core/services/observer.service.ts'
 import { ProductsManagerEvent, ProductsManagerService } from '@/core/services/products-manager.service.ts'
 import { RenderService } from '@/core/services/render.service'
@@ -9,28 +9,28 @@ import { RenderService } from '@/core/services/render.service'
 import styles from './products.module.scss'
 import template from './products.template.html?raw'
 
-export class Products implements Component {
+export class Products implements StaticComponent {
 	static componentName = 'component-products'
 
-	element!: ReturnType<typeof this.render>
+	element!: HTMLElement
 	renderService: RenderService = RenderService.instance
-	productsManagerService: ProductsManagerService = ProductsManagerService.instance
-	observerService: ObserverService = ObserverService.instance
+	#productsManagerService: ProductsManagerService = ProductsManagerService.instance
+	#observerService: ObserverService = ObserverService.instance
 
 	#productCardsByProduct = new WeakMap<Product, ProductCard>()
 
 	constructor() {
-		this.observerService.subscribe(this, [this.productsManagerService], Home)
+		this.#observerService.subscribe(this, [this.#productsManagerService], Home)
 	}
 
 	#fill() {
-		for (const product of this.productsManagerService.getActive()) {
+		for (const product of this.#productsManagerService.getActive()) {
 			this.update({ type: 'products-active-add', data: { product } })
 		}
 	}
 
 	update({ type, data }: ProductsManagerEvent) {
-		const productsListEl: HTMLElement = this.element.querySelector('#products__list')!
+		const productsListEl: HTMLUListElement = this.element.querySelector('#products__list')!
 		switch (type) {
 			case 'products-active-add': {
 				const productCard = new ProductCard(data.product, {
@@ -56,11 +56,11 @@ export class Products implements Component {
 		}
 	}
 
-	render(): HTMLElement {
-		this.element = this.renderService.htmlToElement(template, [], styles) as HTMLElement
+	render() {
+		this.element = this.renderService.htmlToElement(template, [], styles)
 
 		// Если данные уже загружали, то при повторном рендере компонента заполняем его
-		if (this.productsManagerService.isReady()) this.#fill()
+		if (this.#productsManagerService.isReady()) this.#fill()
 		return this.element
 	}
 }

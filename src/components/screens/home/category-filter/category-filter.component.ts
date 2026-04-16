@@ -2,7 +2,7 @@ import { AllCategories } from '@/api/products-fetcher.service.ts'
 import { FilterItem } from '@/components/screens/home/category-filter/filter-item/filter-item.component.ts'
 import { Home } from '@/components/screens/home/home.component.ts'
 import { CheckboxChangeEvent } from '@/components/ui/checkbox/checkbox.component.ts'
-import { Component } from '@/core/component/component.ts'
+import { StaticComponent } from '@/core/component/component.ts'
 import { DragService } from '@/core/services/drag.service.ts'
 import { DragEndEvent } from '@/core/services/drag.types'
 import { ObserverService } from '@/core/services/observer.service.ts'
@@ -15,10 +15,10 @@ import template from './category-filter.template.html?raw'
 
 type ObservableEvents = StoreEvent | ProductsManagerEvent
 
-export class CategoryFilter implements Component {
+export class CategoryFilter implements StaticComponent {
 	static componentName = 'component-category-filter'
 
-	element!: ReturnType<typeof this.render>
+	element!: HTMLElement
 	renderService: RenderService = RenderService.instance
 	observerService: ObserverService = ObserverService.instance
 	dragService: DragService = DragService.instance
@@ -37,6 +37,7 @@ export class CategoryFilter implements Component {
 
 	update({ type, data }: ObservableEvents) {
 		const isScreenReady = this.store.state.screenReady
+
 		switch (type) {
 			case 'screenReady': {
 				if (isScreenReady) this.#onScreenReady()
@@ -60,10 +61,10 @@ export class CategoryFilter implements Component {
 	}
 
 	#onScreenReady() {
-		this.#addListeners()
+		this.#addListenersRequiredReadyDOM()
 	}
 
-	#addListeners() {
+	#addListenersRequiredReadyDOM() {
 		this.dragService.attach(this.element, {
 			componentInstance: this,
 			direction: 'vertical',
@@ -73,7 +74,9 @@ export class CategoryFilter implements Component {
 			handles: [this.element.querySelector(`.${styles['category-filter__handle']}`), this.element],
 			bounds: { rect: document.documentElement.getBoundingClientRect(), sides: ['top'] }
 		})
+	}
 
+	#addListeners() {
 		this.element.addEventListener('dragend', this.#handleDragend)
 		this.#initCheckboxesListeners()
 	}
@@ -81,6 +84,7 @@ export class CategoryFilter implements Component {
 	#handleDragend = (e: DragEndEvent<this>) => {
 		if (e.detail.thresholdPassed.y) this.#toggleExpanded()
 	}
+
 	#toggleExpanded() {
 		this.#expanded = !this.#expanded
 		this.element.ariaExpanded = `${this.#expanded}`
@@ -135,11 +139,12 @@ export class CategoryFilter implements Component {
 		}
 	}
 
-	render(): HTMLElement {
-		this.element = this.renderService.htmlToElement(template, [], styles) as HTMLElement
+	render() {
+		this.element = this.renderService.htmlToElement(template, [], styles)
 
 		void this.#fillCategories()
 
+		this.#addListeners()
 		return this.element
 	}
 }

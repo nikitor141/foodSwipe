@@ -1,8 +1,4 @@
-export interface ExcludedAPI {
-	categories: number[]
-	subcategories: number[]
-	products: number[]
-}
+export type ExcludedAPI = Omit<ExcludedSerialized, 'productsBySubcategory'>
 
 export interface ExcludedRuntime {
 	categories: Set<number>

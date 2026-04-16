@@ -31,11 +31,11 @@ export class Router extends Singleton {
 		this.#handleLinks()
 	}
 
-	getCurrentPath(): string {
+	getCurrentPath() {
 		return location.pathname
 	}
 
-	#isExternalLink(path: string): boolean {
+	#isExternalLink(path: string) {
 		if (!path) return false
 
 		return (

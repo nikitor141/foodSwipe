@@ -1,4 +1,4 @@
-import { Component } from '@/core/component/component'
+import { HybridComponent } from '@/core/component/component'
 import { RenderService } from '@/core/services/render.service'
 
 import styles from './checkbox.module.scss'
@@ -6,25 +6,24 @@ import template from './checkbox.template.html?raw'
 
 export type CheckboxChangeEvent = CustomEvent<{ checked: boolean; changeIsTrusted: boolean }>
 
-export class Checkbox implements Component {
+export class Checkbox implements HybridComponent {
+	static componentName = 'component-checkbox'
+	static isEventsDelegated: boolean = false
 	static #instancesByElement = new WeakMap<HTMLElement, Checkbox>()
 
-	static from(element: HTMLElement): Checkbox {
+	static from(element: HTMLElement) {
 		return this.#instancesByElement.get(element)
 	}
 
-	static isEventsDelegated: boolean = false
-	static componentName = 'component-checkbox'
-
-	element!: ReturnType<typeof this.render>
+	element!: HTMLLabelElement
 	renderService: RenderService = RenderService.instance
 	text: string
 	interactiveLabel: boolean
 	status: boolean
-	indeterminate: boolean
+	indeterminate!: boolean
 
-	#input: HTMLInputElement
-	#label: HTMLSpanElement
+	#input!: HTMLInputElement
+	#label!: HTMLSpanElement
 
 	constructor(status: boolean, text: string, interactiveLabel = true) {
 		this.status = status
@@ -98,11 +97,11 @@ export class Checkbox implements Component {
 		if (indeterminate) this.setStatus(true)
 	}
 
-	render(): HTMLElement {
-		this.element = this.renderService.htmlToElement(template, [], styles) as HTMLElement
+	render() {
+		this.element = this.renderService.htmlToElement(template, [], styles)
 
-		this.#label = this.element.querySelector<HTMLSpanElement>(`.${styles['checkbox__text']}`)
-		this.#input = this.element.querySelector<HTMLInputElement>(`.${styles['checkbox__input']}`)
+		this.#label = this.element.querySelector<HTMLSpanElement>(`.${styles['checkbox__text']}`)!
+		this.#input = this.element.querySelector<HTMLInputElement>(`.${styles['checkbox__input']}`)!
 
 		this.#label.textContent = this.text
 

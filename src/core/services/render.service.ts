@@ -8,23 +8,24 @@ export class RenderService extends Singleton {
 		super()
 	}
 
-	htmlToElement(
+	htmlToElement<T extends Element = HTMLElement>(
 		html: string,
 		components: ComponentConstructor[],
 		styles: CSSModuleClasses
-	): Element | HTMLElement | SVGElement {
+	) {
 		const template = document.createElement('template')
 		template.innerHTML = html.trim()
+		const rootElement = template.content.firstElementChild
 
-		if (template.content.children.length > 1) throw new Error('HTML template must have a single root element')
-		const rootElement: Element = template.content.firstElementChild!
+		if (template.content.children.length > 1 || !rootElement)
+			throw new Error('HTML template must have a single root element')
 
 		if (styles) this.#applyModuleStyles(styles, rootElement)
 
 		this.#replaceSpecialTags(rootElement)
 		this.#replaceComponentTags(rootElement, components)
 
-		return rootElement
+		return rootElement as T
 	}
 
 	#replaceSpecialTags(rootElement: Element) {

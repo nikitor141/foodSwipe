@@ -5,7 +5,7 @@ export class StorageService extends Singleton {
 		super()
 	}
 
-	getAll(): Record<string, unknown> | null {
+	getAll() {
 		if (localStorage.length === 0) return null
 
 		const result: Record<string, unknown> = {}

@@ -2,7 +2,7 @@ import { Product } from '@/api/products-fetcher.service.ts'
 import { ProductCard } from '@/components/screens/home/products/product-card/product-card.component.ts'
 import { WishList } from '@/components/screens/wish-list/wish-list.component.ts'
 import { WishProductsListItemComponent } from '@/components/screens/wish-list/wish-products/wish-products-list-item/wish-products-list-item.component.ts'
-import { Component } from '@/core/component/component'
+import { StaticComponent } from '@/core/component/component'
 import { ObserverService } from '@/core/services/observer.service.ts'
 import { ProductsManagerEvent, ProductsManagerService } from '@/core/services/products-manager.service.ts'
 import { RenderService } from '@/core/services/render.service'
@@ -11,25 +11,24 @@ import styles from './wish-products.module.scss'
 import template from './wish-products.template.html?raw'
 
 type Mode = 'view' | 'edit'
-export class WishProducts implements Component {
+export class WishProducts implements StaticComponent {
 	static componentName = 'component-wish-products'
 
-	element: HTMLElement
+	element!: HTMLElement
 	productsListEl!: HTMLElement
 	clearBtn!: HTMLElement
 	renderService: RenderService = RenderService.instance
-	productsManagerService: ProductsManagerService = ProductsManagerService.instance
-	observerService: ObserverService = ObserverService.instance
+	#productsManagerService: ProductsManagerService = ProductsManagerService.instance
+	#observerService: ObserverService = ObserverService.instance
 
 	#items = new Map<Product, { productCard: ProductCard; li: WishProductsListItemComponent }>()
 	#productsByLiElements = new WeakMap<HTMLLIElement, Product>()
-
 	#selectedLiElements = new Set<HTMLLIElement>()
 
 	#mode: Mode = 'view'
 
 	constructor() {
-		this.observerService.subscribe(this, [this.productsManagerService], WishList)
+		this.#observerService.subscribe(this, [this.#productsManagerService], WishList)
 		// при загрузке приложения на этом экране ждем событие от productsManager для заполнения
 	}
 
@@ -40,8 +39,8 @@ export class WishProducts implements Component {
 				break
 			}
 			case 'wish-list-removed': {
-				const { productCard, li } = this.#items.get(data.product)
-				this.#selectedLiElements.delete(li.element as HTMLLIElement)
+				const { productCard, li } = this.#items.get(data.product)!
+				this.#selectedLiElements.delete(li.element)
 				this.#items.delete(data.product)
 
 				productCard.destroy()
@@ -110,14 +109,14 @@ export class WishProducts implements Component {
 	#handleClearBtnClick = () => {
 		switch (this.#mode) {
 			case 'view': {
-				this.productsManagerService.wishList.clear()
+				this.#productsManagerService.wishList.clear()
 				break
 			}
 			case 'edit': {
 				this.#selectedLiElements.forEach(li => {
-					const product = this.#productsByLiElements.get(li)
-					const { productCard } = this.#items.get(product)
-					this.productsManagerService.wishList.remove(productCard.product)
+					const product = this.#productsByLiElements.get(li)!
+					const { productCard } = this.#items.get(product)!
+					this.#productsManagerService.wishList.remove(productCard.product)
 				})
 				break
 			}
@@ -127,11 +126,11 @@ export class WishProducts implements Component {
 
 	#handleLiClick = (e: PointerEvent) => {
 		const target = e.target as HTMLElement
-		const liEl = target?.closest('[data-component="wish-products-list-item"]') as HTMLLIElement
+		const liEl = target?.closest<HTMLLIElement>('[data-component="wish-products-list-item"]')
 		if (!liEl) {
 			this.element
-				.querySelectorAll('[data-selected="true"]')
-				.forEach((liEl: HTMLLIElement) => (liEl.dataset.selected = 'false'))
+				.querySelectorAll<HTMLLIElement>('[data-selected="true"]')
+				.forEach(liEl => (liEl.dataset['selected'] = 'false'))
 
 			this.#setMode('view')
 			return
@@ -139,10 +138,11 @@ export class WishProducts implements Component {
 
 		const isSelected = this.#selectedLiElements.has(liEl)
 		isSelected ? this.#selectedLiElements.delete(liEl) : this.#selectedLiElements.add(liEl)
-		liEl.dataset.selected = String(!isSelected)
+		liEl.dataset['selected'] = String(!isSelected)
 
 		this.#updateClearBtnIcon()
 	}
+
 	#updateClearBtnIcon() {
 		const useEl = this.element.querySelector('use')!
 		switch (this.#mode) {
@@ -160,30 +160,32 @@ export class WishProducts implements Component {
 	}
 
 	#fill() {
-		const wishProducts = this.productsManagerService.wishList.getRuntime()
+		const wishProducts = this.#productsManagerService.wishList.getRuntime()
 		let reversedIndex = wishProducts.size
+
 		for (const product of wishProducts) {
 			const productCard = new ProductCard(product, { inactiveLink: false, draggable: false })
 			const li = new WishProductsListItemComponent()
+
 			li.mount(this.productsListEl, 'prepend')
 			li.element.style.setProperty('--index', String(reversedIndex--))
 			productCard.mount(li.element, 'append')
 
 			this.#items.set(product, { productCard, li })
-			this.#productsByLiElements.set(li.element as HTMLLIElement, product)
+			this.#productsByLiElements.set(li.element, product)
 		}
+
 		requestAnimationFrame(() => requestAnimationFrame(() => (this.element.dataset['ready'] = 'true')))
 	}
 
 	render() {
-		this.element = this.renderService.htmlToElement(template, [], styles) as HTMLElement
+		this.element = this.renderService.htmlToElement(template, [], styles)
 		this.productsListEl = this.element.querySelector<HTMLUListElement>(`.${styles['wish-products__list']}`)!
 		this.clearBtn = this.element.querySelector<HTMLButtonElement>(`.${styles['wish-products__clear-button']}`)!
 
-		if (this.productsManagerService.isReady()) this.#fill()
+		if (this.#productsManagerService.isReady()) this.#fill()
 
 		this.#addListeners()
-
 		return this.element
 	}
 }

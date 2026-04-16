@@ -1,7 +1,7 @@
-@use '@/styles/functions' as f;
-@use '@/styles/variables' as *;
-@use '@/styles/mixins' as m;
-@use 'sass:math';
+@use "@/styles/functions" as f;
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as m;
+@use "sass:math";
 
 .header {
 	@include m.glassyBorder(0deg, f.rem(1));
@@ -21,19 +21,19 @@
 	background-color: f.cl($cd-glass-background, $a: 0.45);
 	border-radius: f.rem(50);
 	backdrop-filter: $liquid-blur-d;
-	[data-theme='light'] & {
+	[data-theme="light"] & {
 		backdrop-filter: $liquid-blur-l;
 	}
 
 	&::after {
 		inline-size: f.rem(2);
 		block-size: f.rem(20);
-		content: '';
+		content: "";
 		background-color: f.cl($cd-glass-background, $a: 0.5);
 		border-radius: f.rem(1);
 	}
 
-	[data-ui='theme-switcher'] {
+	[data-ui="theme-switcher"] {
 		order: 1;
 	}
 

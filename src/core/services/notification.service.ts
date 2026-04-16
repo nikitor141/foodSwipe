@@ -1,13 +1,13 @@
 import { Notification, NotificationType } from '@/components/layout/notification/notification.component'
 import { SELECTOR_NOTIFICATIONS_LIST } from '@/constants/selectors.constants'
-import { DragCustomEvent } from '@/core/services/drag.types.ts'
+import { DragEndEvent, DragStartEvent } from '@/core/services/drag.types.ts'
 import { Singleton } from '@/utils/singleton'
 
 export class NotificationService extends Singleton {
 	#queue: Notification[] = []
 	#active = new Set<Notification>()
 	#limit: number = 3
-	#container: HTMLElement
+	#container!: HTMLElement
 
 	protected constructor() {
 		super()
@@ -24,7 +24,7 @@ export class NotificationService extends Singleton {
 	}
 
 	#getContainer() {
-		return (this.#container ??= document.querySelector(SELECTOR_NOTIFICATIONS_LIST))
+		return (this.#container ??= document.querySelector(SELECTOR_NOTIFICATIONS_LIST)!)
 	}
 
 	#showNotif(notif: Notification) {
@@ -40,6 +40,8 @@ export class NotificationService extends Singleton {
 	}
 
 	#destroyNotif(notif: Notification) {
+		if (!notif.timeout) return
+
 		clearTimeout(notif.timeout)
 		notif.destroy()
 	}
@@ -49,27 +51,29 @@ export class NotificationService extends Singleton {
 		this.#removeListeners(e.detail.instance)
 
 		if (this.#queue.length > 0) {
-			const notif = this.#queue.shift()
+			const notif = this.#queue.shift()!
 
 			this.#showNotif(notif)
 		}
 	}
 
-	#handleDragstart = (e: DragCustomEvent<Notification>) => {
+	#handleDragstart = (e: DragStartEvent<Notification>) => {
+		if (!e.detail.instance.timeout) return
+
 		clearTimeout(e.detail.instance.timeout)
 		e.detail.instance.timeout = null
 	}
 
-	#handleDragend = (e: DragCustomEvent<Notification>) => {
+	#handleDragend = (e: DragEndEvent<Notification, 'y'>) => {
 		const notif = e.detail.instance
 
-		if (e.detail.thresholdPassed.y || (!e.detail.isInView.topLeft && !e.detail.isInView.topRight)) {
+		if (e.detail.thresholdPassed!.y || (!e.detail.isInView.topLeft && !e.detail.isInView.topRight)) {
 			this.#destroyNotif(notif)
 		} else {
 			this.#setNotifTimeout(notif)
 		}
 	}
-
+	// todo это слой в ui
 	#addListeners(notif: Notification) {
 		notif.element.addEventListener('notifDestroyed', this.#handleDestroyed)
 		notif.element.addEventListener('dragstart', this.#handleDragstart)

@@ -1,5 +1,5 @@
 import { Product } from '@/api/products-fetcher.service.ts'
-import { Component } from '@/core/component/component.ts'
+import { DynamicComponent } from '@/core/component/component.ts'
 import { DragService } from '@/core/services/drag.service.ts'
 import { DragConfig, DragEndEvent, DragMoveEvent } from '@/core/services/drag.types'
 import { ProductsManagerService } from '@/core/services/products-manager.service.ts'
@@ -8,17 +8,22 @@ import { RenderService } from '@/core/services/render.service.ts'
 import styles from './product-card.module.scss'
 import template from './product-card.template.html?raw'
 
-export class ProductCard implements Component {
+export class ProductCard implements DynamicComponent {
 	static componentName = 'component-product-card'
+	static #instancesByElement = new WeakMap<HTMLElement, ProductCard>()
 
-	element!: ReturnType<typeof this.render>
+	static from(element: HTMLElement) {
+		return this.#instancesByElement.get(element)
+	}
+
+	element: HTMLElement | null = null
 	renderService: RenderService = RenderService.instance
 	dragService: DragService = DragService.instance
 	productsManagerService: ProductsManagerService = ProductsManagerService.instance
 	product: Product
 	inactiveLink: boolean
 	draggable: boolean
-	#isDestroying: boolean = false
+	isDestroying: boolean = false
 
 	dragConfig: DragConfig = {
 		componentInstance: this,
@@ -28,12 +33,6 @@ export class ProductCard implements Component {
 		snap: { animation: true, forwards: true }
 	}
 
-	static #instancesByElement = new WeakMap<HTMLElement, ProductCard>()
-
-	static from(element: HTMLElement) {
-		return this.#instancesByElement.get(element)
-	}
-
 	constructor(product: Product, config: { inactiveLink: boolean; draggable: boolean }) {
 		this.product = product
 		this.inactiveLink = config.inactiveLink
@@ -41,20 +40,21 @@ export class ProductCard implements Component {
 	}
 
 	#handleDragMove = (e: DragMoveEvent<this, 'x'>) => {
+		if (!this.element) return
 		const dx = e.detail.elementDelta.center.x
 
-		const t = Math.min(1, Math.abs(dx) / this.dragConfig.threshold)
+		const t = Math.min(1, Math.abs(dx) / this.dragConfig.threshold!)
 
 		if (dx > 0) {
 			// positive swipe
-			this.element.style.setProperty('--card-gradient-negative-opacity', lerp(0.1, 0, t))
-			this.element.style.setProperty('--card-gradient-positive-opacity', lerp(0.1, 0.4, t))
-			this.element.style.setProperty('--card-gradient-positive-end', lerp(60, 100, t) + '%')
+			this.element.style.setProperty('--card-gradient-negative-opacity', `${lerp(0.1, 0, t)}`)
+			this.element.style.setProperty('--card-gradient-positive-opacity', `${lerp(0.1, 0.4, t)}`)
+			this.element.style.setProperty('--card-gradient-positive-end', `${lerp(60, 100, t)}%`)
 		} else {
 			// negative swipe
-			this.element.style.setProperty('--card-gradient-positive-opacity', lerp(0.1, 0, t))
-			this.element.style.setProperty('--card-gradient-negative-opacity', lerp(0.1, 0.4, t))
-			this.element.style.setProperty('--card-gradient-negative-end', lerp(80, 100, t) + '%')
+			this.element.style.setProperty('--card-gradient-positive-opacity', `${lerp(0.1, 0, t)}`)
+			this.element.style.setProperty('--card-gradient-negative-opacity', `${lerp(0.1, 0.4, t)}`)
+			this.element.style.setProperty('--card-gradient-negative-end', `${lerp(80, 100, t)}%`)
 		}
 
 		this.element.style.rotate = dx * 0.05 + 'deg'
@@ -65,24 +65,29 @@ export class ProductCard implements Component {
 		}
 	}
 
-	#handleDragend = (e: DragEndEvent<this>) => {
+	#handleDragend = (e: DragEndEvent<this, 'x'>) => {
+		if (!this.element) return
+
 		this.element.style.removeProperty('--card-gradient-negative-opacity')
 		this.element.style.removeProperty('--card-gradient-positive-opacity')
 		this.element.style.removeProperty('--card-gradient-positive-end')
 		this.element.style.removeProperty('--card-gradient-negative-end')
 
-		if (!e.detail.thresholdPassed.x) {
-			this.element.style.rotate = null
-			this.element.style.opacity = null
+		if (!e.detail.thresholdPassed?.x && this.element) {
+			this.element.style.removeProperty('rotate')
+			this.element.style.removeProperty('opacity')
 		} else {
 			this.productsManagerService.swipe(e.detail.instance.product, e.detail.direction)
 		}
 	}
 
-	//todo? #addListenersRequiredReadyDOM
-	#addListeners() {
+	#addListenersRequiredReadyDOM() {
+		if (!this.element) return
 		this.dragService.attach(this.element, this.dragConfig)
+	}
 
+	#addListeners() {
+		if (!this.element) return
 		this.element.addEventListener('dragmove', this.#handleDragMove)
 		this.element.addEventListener('dragend', this.#handleDragend)
 	}
@@ -97,16 +102,18 @@ export class ProductCard implements Component {
 		if (!this.draggable) return
 
 		requestAnimationFrame(() => {
-			if (!this.element || this.#isDestroying) return
-			this.#addListeners()
+			if (!this.element || this.isDestroying) return
+			this.#addListenersRequiredReadyDOM()
 		})
 	}
 
-	destroy(direction?: DragEndEvent<this>['detail']['direction']) {
-		if (this.#isDestroying) return
-		this.#isDestroying = true
+	destroy(direction?: DragEndEvent<this, 'x'>['detail']['direction']) {
+		if (this.isDestroying || !this.element) return
+		this.isDestroying = true
 
 		const clear = () => {
+			if (!this.element) return
+
 			if (this.draggable) {
 				this.dragService.detach(this.element)
 			}
@@ -116,15 +123,15 @@ export class ProductCard implements Component {
 		}
 
 		if (direction?.x) {
-			this.element.classList.add(styles[`product-card--vanishing-${direction.x}`])
+			this.element.classList.add(styles[`product-card--vanishing-${direction.x}`]!)
 			this.element.onanimationend = clear
 		} else {
 			clear()
 		}
 	}
 
-	render(): HTMLElement {
-		this.element = this.renderService.htmlToElement(template, [], styles) as HTMLElement
+	render() {
+		this.element = this.renderService.htmlToElement(template, [], styles)
 
 		const subcategoryEl = this.element.querySelector<HTMLSpanElement>(`.${styles['product-card__tag-subcategory']}`)!
 		const categoryEl = this.element.querySelector<HTMLSpanElement>(`.${styles['product-card__tag-category']}`)!
@@ -152,6 +159,8 @@ export class ProductCard implements Component {
 		pricePennyEl.textContent = pricePenny
 		imgEl.src = this.product.image
 		imgEl.alt = this.product.name
+
+		this.#addListeners()
 
 		return this.element
 	}

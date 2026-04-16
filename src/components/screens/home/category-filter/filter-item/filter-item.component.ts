@@ -1,25 +1,25 @@
 import { Category, Subcategory } from '@/api/products-fetcher.service.ts'
 import { FilterItemSubcategoriesList } from '@/components/screens/home/category-filter/filter-item/filter-item-subcategories-list/filter-item-subcategories-list.component.ts'
 import { Checkbox } from '@/components/ui/checkbox/checkbox.component.ts'
-import { Component } from '@/core/component/component'
+import { DynamicComponent } from '@/core/component/component'
 import { ProductsManagerEvents, ProductsManagerService } from '@/core/services/products-manager.service.ts'
 import { RenderService } from '@/core/services/render.service'
 
 import styles from './filter-item.module.scss'
 import template from './filter-item.template.html?raw'
 
-export class FilterItem implements Component {
+export class FilterItem implements DynamicComponent {
+	static componentName = 'component-filter-item'
 	static #instancesByElement = new WeakMap<HTMLElement, FilterItem>()
 
 	static from(element: HTMLElement) {
 		return this.#instancesByElement.get(element)
 	}
 
-	static componentName = 'component-filter-item'
-
-	element!: ReturnType<typeof this.render>
+	element: HTMLLIElement | null = null
 	renderService: RenderService = RenderService.instance
 	productsManagerService: ProductsManagerService = ProductsManagerService.instance
+	isDestroying: boolean = false
 
 	category: Category | Subcategory
 	parent?: FilterItem
@@ -31,7 +31,7 @@ export class FilterItem implements Component {
 
 	constructor(category: Category | Subcategory, subcategories?: Subcategory[], parent?: FilterItem) {
 		this.category = category
-		if (subcategories) {
+		if (subcategories?.length) {
 			this.subcategories = subcategories
 			this.isParent = true
 		}
@@ -46,7 +46,20 @@ export class FilterItem implements Component {
 		parent[method](this.element)
 	}
 
-	syncUi(type: keyof ProductsManagerEvents) {
+	destroy() {
+		if (this.isDestroying) return
+		this.isDestroying = true
+
+		this.element!.remove()
+		this.element = null
+	}
+
+	syncUi(
+		type: keyof Pick<
+			ProductsManagerEvents,
+			'category-excluded' | 'subcategory-excluded' | 'category-included' | 'subcategory-included'
+		>
+	) {
 		const [scope, action] = type.split('-')
 		const isExcluded = action === 'excluded'
 		const handlers = {
@@ -60,7 +73,7 @@ export class FilterItem implements Component {
 				this.updateIndeterminateState()
 			}
 		}
-		handlers[scope]()
+		handlers[scope as keyof typeof handlers]()
 	}
 
 	handleCheckboxLabelClick() {
@@ -69,7 +82,7 @@ export class FilterItem implements Component {
 	}
 
 	#toggleExpanded() {
-		const subcategoriesListElement = this.subcategoriesList.element
+		const subcategoriesListElement = this.subcategoriesList!.element
 		const isExpanded = subcategoriesListElement.ariaExpanded === 'true'
 		subcategoriesListElement.ariaExpanded = String(!isExpanded)
 
@@ -84,7 +97,7 @@ export class FilterItem implements Component {
 				)
 			)
 		)
-			this.element.scrollIntoView({ behavior: 'smooth' })
+			this.element!.scrollIntoView({ behavior: 'smooth' })
 	}
 
 	setChildrenStatuses(status: boolean) {
@@ -93,7 +106,7 @@ export class FilterItem implements Component {
 		}
 	}
 
-	#checkChildrenStatuses(): { hasChecked: boolean; hasUnchecked: boolean } {
+	#checkChildrenStatuses() {
 		if (!this.isParent) return
 
 		const statuses = this.children.map(child => child.checkbox.status)
@@ -105,7 +118,7 @@ export class FilterItem implements Component {
 
 	updateStatusByChildren() {
 		if (!this.isParent) {
-			this.parent.updateStatusByChildren()
+			this.parent!.updateStatusByChildren()
 			return
 		}
 
@@ -119,7 +132,7 @@ export class FilterItem implements Component {
 
 	updateIndeterminateState() {
 		if (!this.isParent) {
-			this.parent.updateIndeterminateState()
+			this.parent!.updateIndeterminateState()
 			return
 		}
 
@@ -128,15 +141,15 @@ export class FilterItem implements Component {
 		this.checkbox.setIndeterminate(hasUnchecked && hasChecked)
 	}
 
-	render(): HTMLElement {
-		this.element = this.renderService.htmlToElement(template, [], styles) as HTMLElement
+	render() {
+		this.element = this.renderService.htmlToElement(template, [], styles)
 
 		const excluded = this.productsManagerService.excluded.getRuntime()
 
 		this.checkbox = new Checkbox(
 			this.isParent
 				? !excluded.categories.has(this.category.id)
-				: !excluded.categories.has(this.parent.category.id) && !excluded.subcategories.has(this.category.id),
+				: !excluded.categories.has(this.parent!.category.id) && !excluded.subcategories.has(this.category.id),
 			this.category.name,
 			!this.isParent
 		)
@@ -147,8 +160,8 @@ export class FilterItem implements Component {
 			this.subcategoriesList.mount(this.element, 'append')
 			const ul = this.subcategoriesList.element
 
-			for (const subcategory of this.subcategories) {
-				const subFilterItem = new FilterItem(subcategory, null, this)
+			for (const subcategory of this.subcategories!) {
+				const subFilterItem = new FilterItem(subcategory, [], this)
 				subFilterItem.mount(ul, 'append')
 				this.children.push(subFilterItem)
 			}

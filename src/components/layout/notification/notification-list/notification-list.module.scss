@@ -1,0 +1,11 @@
+@use "@/styles/functions" as f;
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as m;
+
+.notification-list {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 3;
+	min-inline-size: 100%;
+}

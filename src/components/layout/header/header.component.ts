@@ -1,5 +1,5 @@
 import { ThemeSwitcher } from '@/components/ui/theme-switcher/theme-switcher.component.ts'
-import { Component } from '@/core/component/component'
+import { StaticComponent } from '@/core/component/component'
 import { ObserverService } from '@/core/services/observer.service.ts'
 import { RenderService } from '@/core/services/render.service'
 import { Store, StoreEvent } from '@/core/store/store.ts'
@@ -7,10 +7,10 @@ import { Store, StoreEvent } from '@/core/store/store.ts'
 import styles from './header.module.scss'
 import template from './header.template.html?raw'
 
-export class Header implements Component {
+export class Header implements StaticComponent {
 	static componentName = 'component-header'
 
-	element!: ReturnType<typeof this.render>
+	element!: HTMLElement
 	renderService: RenderService = RenderService.instance
 	observerService: ObserverService = ObserverService.instance
 	store: Store = Store.instance
@@ -41,14 +41,13 @@ export class Header implements Component {
 	}
 
 	#onUpdate() {
-		const nav: HTMLElement = this.element.querySelector('nav')
-		const indicator: HTMLElement = this.element.querySelector(`.${styles['header__nav-indicator']}`)
-		const activeLinkBtn: HTMLElement = this.element.querySelector(
+		const nav = this.element.querySelector<HTMLElement>('nav')!
+		const indicator = this.element.querySelector<HTMLElement>(`.${styles['header__nav-indicator']}`)!
+		const activeLinkBtn = this.element.querySelector<HTMLElement>(
 			`.${styles['header__nav-link']}[href="${this.store.state.screen.current.instance.path}"]`
-		)
+		)!
 
-		//todo переписать на anchor() positioning
-		const allActiveLinkBtns: NodeList = this.element.querySelectorAll(`.${styles['header__nav-link--active']}`)
+		const allActiveLinkBtns = this.element.querySelectorAll<HTMLElement>(`.${styles['header__nav-link--active']}`)
 
 		const navCoords = nav.getBoundingClientRect()
 		const indicatorCoords = indicator.getBoundingClientRect()
@@ -62,31 +61,31 @@ export class Header implements Component {
 		const { first, second } = getCoords(newLeft, newRight, currentLeft)
 
 		indicator.classList.remove(
-			styles['header__nav-indicator--going-left'],
-			styles['header__nav-indicator--going-right']
+			styles['header__nav-indicator--going-left']!,
+			styles['header__nav-indicator--going-right']!
 		)
-		indicator.classList.add(styles[`header__nav-indicator--going-${first[0]}`])
+		indicator.classList.add(styles[`header__nav-indicator--going-${first[0]}`]!)
 
 		indicator.style[first[0]] = first[1] + 'px'
 		indicator.style[second[0]] = second[1] + 'px'
 
-		allActiveLinkBtns.forEach((el: HTMLElement) => el.classList.remove(styles['header__nav-link--active']))
-		activeLinkBtn.classList.add(styles['header__nav-link--active'])
+		allActiveLinkBtns.forEach(el => el.classList.remove(styles['header__nav-link--active']!))
+		activeLinkBtn.classList.add(styles['header__nav-link--active']!)
 
 		function getCoords(newLeft: number, newRight: number, currentLeft: number) {
 			const goingRight = newLeft > currentLeft
 
 			return goingRight
-				? { first: ['right', newRight], second: ['left', newLeft] }
-				: { first: ['left', newLeft], second: ['right', newRight] }
+				? ({ first: ['right', newRight], second: ['left', newLeft] } as const)
+				: ({ first: ['left', newLeft], second: ['right', newRight] } as const)
 		}
 
 		// и scss - чинит анимацию при загрузке страницы в chromium, safari
-		if (!nav.dataset.init) requestAnimationFrame(() => (nav.dataset.init = 'true'))
+		if (!nav.dataset['init']) requestAnimationFrame(() => (nav.dataset['init'] = 'true'))
 	}
 
-	render(): HTMLElement {
-		this.element = this.renderService.htmlToElement(template, [ThemeSwitcher], styles) as HTMLElement
+	render() {
+		this.element = this.renderService.htmlToElement(template, [ThemeSwitcher], styles)
 
 		return this.element
 	}

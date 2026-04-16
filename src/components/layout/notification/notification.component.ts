@@ -1,4 +1,4 @@
-import { Component } from '@/core/component/component'
+import { DynamicComponent } from '@/core/component/component'
 import { DragService } from '@/core/services/drag.service.ts'
 import { RenderService } from '@/core/services/render.service'
 
@@ -7,25 +7,31 @@ import template from './notification.template.html?raw'
 
 export type NotificationType = 'positive' | 'negative' | 'neutral'
 
-export class Notification implements Component {
+export class Notification implements DynamicComponent {
 	static componentName = 'component-notification'
+	static #instancesByElement = new WeakMap<HTMLElement, Notification>()
 
-	element!: ReturnType<typeof this.render>
+	static from(element: HTMLElement) {
+		return this.#instancesByElement.get(element)
+	}
+
+	element: HTMLElement | null = null
 	renderService: RenderService = RenderService.instance
 	dragService: DragService = DragService.instance
+	isDestroying: boolean = false
+
 	message: string
 	type: NotificationType
-
-	timeout!: ReturnType<typeof setTimeout>
-	#isDestroying: boolean = false
+	timeout: ReturnType<typeof setTimeout> | null = null
 
 	constructor(message: string, type: NotificationType) {
 		this.message = message
 		this.type = type
 	}
 
-	// todo? #addListenersRequiredReadyDOM
-	#addListeners() {
+	#addListenersRequiredReadyDOM() {
+		if (!this.element) return
+
 		this.dragService.attach(this.element, {
 			componentInstance: this,
 			direction: 'vertical',
@@ -38,21 +44,25 @@ export class Notification implements Component {
 	mount(parent: HTMLElement, method: 'append' | 'prepend') {
 		if (!this.element) this.element = this.render()
 
+		Notification.#instancesByElement.set(this.element, this)
+
 		parent[method](this.element)
 
 		requestAnimationFrame(() => {
-			if (!this.element || this.#isDestroying) return
-			this.#addListeners()
+			if (!this.element || this.isDestroying) return
+			this.#addListenersRequiredReadyDOM()
 		})
 	}
 
 	destroy() {
-		if (this.#isDestroying) return
+		if (this.isDestroying || !this.element) return
 
-		this.#isDestroying = true
-		this.element.classList.add(styles['notification--vanishing'])
+		this.isDestroying = true
+		this.element.classList.add(styles['notification--vanishing']!)
 
 		this.element.onanimationend = () => {
+			if (!this.element) return
+
 			this.element.dispatchEvent(new CustomEvent('notifDestroyed', { bubbles: true, detail: { instance: this } }))
 
 			this.dragService.detach(this.element)
@@ -62,16 +72,17 @@ export class Notification implements Component {
 		}
 	}
 
-	render(): HTMLElement {
-		this.element = this.renderService.htmlToElement(template, [], styles) as HTMLElement
+	render() {
+		this.element = this.renderService.htmlToElement(template, [], styles)
 
 		this.element.textContent = this.message
 
 		const classNames = {
-			positive: styles['notification--positive'],
-			negative: styles['notification--negative'],
-			neutral: styles['notification--neutral']
-		}
+			positive: styles['notification--positive']!,
+			negative: styles['notification--negative']!,
+			neutral: styles['notification--neutral']!
+		} satisfies Record<NotificationType, string>
+
 		const className = classNames[this.type]
 
 		this.element.classList.add(className)

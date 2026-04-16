@@ -18,14 +18,18 @@ export interface DragConfig<T extends Component = Component, D extends Direction
 	handles?: HTMLElement[] // элементы-ручка
 }
 
+export type DragStartEvent<T> = CustomEvent<{
+	instance: T
+}>
+
 export type DragMoveEvent<T, TAxis extends Axis> = CustomEvent<{
 	instance: T // Нужен для того, чтобы не только сам компонент, но и его оркестратор мог реагировать на событие
 	elementDelta: Record<TAxis, number> & { center: Record<TAxis, number> }
 }>
 
-export type DragEndEvent<T> = CustomEvent<{
+export type DragEndEvent<T, TAxis extends Axis> = CustomEvent<{
 	instance: T
 	isInView: Record<'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight', boolean>
-	direction: Record<Axis, Side>
-	thresholdPassed?: Record<Axis, boolean>
+	direction: Record<TAxis, Side>
+	thresholdPassed?: Record<TAxis, boolean>
 }>

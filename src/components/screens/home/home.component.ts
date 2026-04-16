@@ -10,7 +10,7 @@ import template from './home.template.html?raw'
 export class Home extends BaseScreen {
 	static componentName = 'component-home'
 
-	element: HTMLElement
+	element!: HTMLElement
 	renderService: RenderService = RenderService.instance
 	path!: string
 
@@ -22,8 +22,8 @@ export class Home extends BaseScreen {
 		super.setTitle({ title: TITLE_HOME })
 	}
 
-	render(): HTMLElement {
-		this.element = this.renderService.htmlToElement(template, [Products, CategoryFilter], styles) as HTMLElement
+	render() {
+		this.element = this.renderService.htmlToElement(template, [Products, CategoryFilter], styles)
 
 		return this.element
 	}

@@ -1,7 +1,7 @@
 import { Singleton } from '@/utils/singleton.ts'
 
 import { Component } from '../component/component'
-import { Axis, Direction, DragConfig, DragEndEvent, DragMoveEvent, Side } from './drag.types'
+import { Axis, Direction, DragConfig, DragEndEvent, DragMoveEvent, DragStartEvent, Side } from './drag.types'
 import { NotificationService } from './notification.service'
 
 type AxisInfo = {
@@ -175,7 +175,7 @@ class DragSession<T extends Component, D extends Direction, TAxis extends Axis =
 			new CustomEvent('dragstart', {
 				bubbles: true,
 				detail: { instance: this.config.componentInstance }
-			})
+			}) as DragStartEvent<typeof this.config.componentInstance>
 		)
 
 		const moving = (e: PointerEvent) => {
@@ -214,7 +214,7 @@ class DragSession<T extends Component, D extends Direction, TAxis extends Axis =
 						direction: this.getDirection(),
 						thresholdPassed: this.checkThreshold()
 					}
-				}) as DragEndEvent<typeof this.config.componentInstance>
+				}) as DragEndEvent<typeof this.config.componentInstance, TAxis>
 			)
 		}
 

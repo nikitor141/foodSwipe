@@ -1,8 +1,12 @@
 import { ImagesStore } from '@/core/store/images.store'
 
-export function imgToPicture(tag: HTMLImageElement): HTMLPictureElement {
+export function imgToPicture(tag: HTMLImageElement) {
 	const imageStore: ImagesStore = ImagesStore.instance
-	const { original, avif, webp, w, h } = imageStore.images[tag.dataset.src]
+	const src = tag.dataset['src']
+	if (!src) throw new Error('Attribute src doesn`t specified')
+	const image = imageStore.images[src]
+	if (!image) throw new Error('Image not found')
+	const { original, avif, webp, w, h } = imageStore.images[tag.dataset['src']!]!
 
 	const template = document.createElement('template')
 	template.innerHTML = `

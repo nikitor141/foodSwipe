@@ -4,7 +4,7 @@ import { NotificationService } from '@/core/services/notification.service.ts'
 import { ObserverService } from '@/core/services/observer.service.ts'
 import { Store } from '@/core/store/store.ts'
 import { ExcludedAPI, ExcludedRuntime } from '@/core/types/excluded.types.ts'
-import { WishListRuntime } from '@/core/types/wishList.types.ts'
+import { WishListNormalized, WishListRuntime } from '@/core/types/wishList.types.ts'
 import { debounce } from '@/utils/debounce.ts'
 import { getAsObject } from '@/utils/getAsObject.ts'
 import { Singleton } from '@/utils/singleton.ts'
@@ -32,7 +32,7 @@ export class ProductsManagerService extends Singleton {
 	store: Store = Store.instance
 
 	#activeLimit: number = 3
-	#batchSize: number = 25
+	#batchSize: number = 150
 	#queue = new Set<Product>()
 	#active = new Set<Product>()
 	#ready: boolean = false
@@ -170,7 +170,7 @@ export class ProductsManagerService extends Singleton {
 	wishList = {
 		getRuntime: (): WishListRuntime => this.#wishList,
 
-		getNormalized: () => Array.from(this.#wishList, product => product.id),
+		getNormalized: (): WishListNormalized => Array.from(this.#wishList, product => product.id),
 
 		addProduct: (product: Product) => {
 			this.#wishList.add(product)
@@ -260,7 +260,7 @@ export class ProductsManagerService extends Singleton {
 		this.#excluded.productsBySubcategory.delete(subCatId)
 	}
 
-	#purgeActiveAndQueueBy(prop: 'subcategory_id' | 'category_id', ref: number): boolean {
+	#purgeActiveAndQueueBy(prop: 'subcategory_id' | 'category_id', ref: number) {
 		// Подстраховка от мутаций во время итераций
 		for (const p of Array.from(this.#queue)) {
 			if (p[prop] === ref) {
@@ -278,7 +278,8 @@ export class ProductsManagerService extends Singleton {
 		return activeWasFiltered
 	}
 
-	async #requestProducts(): Promise<Product[]> {
+	async #requestProducts() {
+		//todo ебатека с типом?
 		try {
 			const countToFill = this.#batchSize - this.#queue.size
 			if (!countToFill) return []
