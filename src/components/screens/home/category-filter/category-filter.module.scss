@@ -7,7 +7,6 @@
 	@include m.glassyBorder(45deg);
 	position: fixed;
 	z-index: 2;
-
 	//flex нужен, чтобы размер &__list был не больше чем доступное пространство и прокручивался
 	display: flex;
 	flex-direction: column;

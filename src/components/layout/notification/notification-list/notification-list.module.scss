@@ -4,8 +4,12 @@
 
 .notification-list {
 	position: fixed;
-	top: 0;
+	top: f.rem(24);
 	left: 0;
 	z-index: 3;
-	min-inline-size: 100%;
+
+	display: grid;
+	grid-template-areas: "stack";
+	place-items: center stretch;
+	padding: 0 f.rem(15);
 }

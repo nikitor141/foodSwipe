@@ -4,6 +4,7 @@ import { DragService } from '@/core/services/drag.service.ts'
 import { DragConfig, DragEndEvent, DragMoveEvent } from '@/core/services/drag.types'
 import { ProductsManagerService } from '@/core/services/products-manager.service.ts'
 import { RenderService } from '@/core/services/render.service.ts'
+import { imgToPicture } from '@/utils/imgToPicture'
 
 import styles from './product-card.module.scss'
 import template from './product-card.template.html?raw'
@@ -159,6 +160,10 @@ export class ProductCard implements DynamicComponent {
 		pricePennyEl.textContent = pricePenny
 		imgEl.src = this.product.image
 		imgEl.alt = this.product.name
+		imgEl.onerror = () => {
+			imgEl.dataset['src'] = '/src/assets/img/background/mascot-placeholder.png'
+			imgEl.replaceWith(imgToPicture(imgEl))
+		}
 
 		this.#addListeners()
 

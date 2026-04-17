@@ -37,7 +37,7 @@ export class Notification implements DynamicComponent {
 			direction: 'vertical',
 			threshold: 150,
 			resistance: 1,
-			snap: { animation: true, forwards: true }
+			snap: { animation: true, forwards: false }
 		})
 	}
 

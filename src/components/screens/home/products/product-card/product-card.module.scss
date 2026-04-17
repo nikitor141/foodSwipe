@@ -89,7 +89,7 @@
 		display: flex;
 		align-items: center;
 		max-block-size: 8.5cqi;
-		margin-bottom: 7cqi;
+		margin-block-end: 7cqi;
 		font-size: 4cqi;
 		color: f.cl($cd-small-text, $a: 0.6);
 		text-wrap: nowrap;
@@ -111,12 +111,17 @@
 		justify-content: center;
 		block-size: 70cqi;
 		padding: 3.5cqi;
-		margin-bottom: 5cqi;
+		margin-block-end: 5cqi;
 		background-color: white;
 		border-radius: 7cqi;
 
 		img {
 			inline-size: auto;
+		}
+
+		//fallback
+		picture {
+			block-size: 100%;
 		}
 	}
 	&__price {
@@ -129,7 +134,7 @@
 	}
 	&__name {
 		block-size: 1em * 3 * 1.2;
-		margin-bottom: 5cqi;
+		margin-block-end: 5cqi;
 		overflow: hidden;
 		font-size: 8.5cqi;
 		font-weight: bold;

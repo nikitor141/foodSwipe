@@ -27,11 +27,7 @@
 			$animate: true
 		);
 	}
-
-	position: absolute;
-	top: f.rem(24); //тут не надо, надо в list todo
-	left: 0;
-	inline-size: f.rem(300);
+	grid-area: stack;
 	padding: 0.8em 1.6em;
 	font-size: f.rem(14);
 	line-height: 1.4;
@@ -47,22 +43,23 @@
 		top 0.35s ease,
 		opacity 0.35s ease;
 
+	&[data-dragging="true"] {
+		transition: none;
+	}
+
+	&:nth-child(2) {
+		// top: f.rem(32);
+	}
+	&:nth-child(3) {
+		// top: f.rem(40);
+	}
+
 	&--neutral,
 	&--positive,
 	&--negative {
 		pointer-events: auto;
 		user-select: none;
 		opacity: 1;
-
-		&:nth-child(2) {
-			top: f.rem(32);
-		}
-		&:nth-child(3) {
-			top: f.rem(40);
-		}
-	}
-	&[data-dragging="true"] {
-		transition: none;
 	}
 
 	&--vanishing {

@@ -19,7 +19,7 @@ export class NotificationList implements StaticComponent {
 		this.#observerService.subscribe(this, [this.#store])
 	}
 
-	update({ type, data }: StoreEvent) {
+	update({ type }: StoreEvent) {
 		const isScreenReady = this.#store.state.screenReady
 
 		switch (type) {

@@ -51,7 +51,8 @@ export class ProductsFetcherService extends Singleton {
 				limit_count: count
 			})
 			.overrideTypes<Product[]>()
-		if (error) this.#notificationService.show(error.message, 'negative')
+		// if (error) this.#notificationService.show(error.message, 'negative')
+		if (error) throw error
 		else return data
 	}
 

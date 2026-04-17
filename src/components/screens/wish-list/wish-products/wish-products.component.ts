@@ -2,6 +2,7 @@ import { Product } from '@/api/products-fetcher.service.ts'
 import { ProductCard } from '@/components/screens/home/products/product-card/product-card.component.ts'
 import { WishList } from '@/components/screens/wish-list/wish-list.component.ts'
 import { WishProductsListItemComponent } from '@/components/screens/wish-list/wish-products/wish-products-list-item/wish-products-list-item.component.ts'
+import { NoData } from '@/components/ui/no-data/no-data.component'
 import { StaticComponent } from '@/core/component/component'
 import { ObserverService } from '@/core/services/observer.service.ts'
 import { ProductsManagerEvent, ProductsManagerService } from '@/core/services/products-manager.service.ts'
@@ -26,6 +27,7 @@ export class WishProducts implements StaticComponent {
 	#selectedLiElements = new Set<HTMLLIElement>()
 
 	#mode: Mode = 'view'
+	#placeholder: NoData | null = null
 
 	constructor() {
 		this.#observerService.subscribe(this, [this.#productsManagerService], WishList)
@@ -40,11 +42,13 @@ export class WishProducts implements StaticComponent {
 			}
 			case 'wish-list-removed': {
 				const { productCard, li } = this.#items.get(data.product)!
-				this.#selectedLiElements.delete(li.element)
+				this.#selectedLiElements.delete(li.element!)
 				this.#items.delete(data.product)
 
 				productCard.destroy()
 				li.destroy()
+
+				if (!this.#items.size) this.#handleNoData()
 				break
 			}
 			case 'wish-list-cleared': {
@@ -55,6 +59,7 @@ export class WishProducts implements StaticComponent {
 
 				this.#items.clear()
 				this.#selectedLiElements.clear()
+				this.#handleNoData()
 				break
 			}
 		}
@@ -159,23 +164,39 @@ export class WishProducts implements StaticComponent {
 		}
 	}
 
+	#handleNoData() {
+		if (this.#placeholder) return
+
+		this.#placeholder = new NoData()
+		this.#placeholder.mount(this.productsListEl, 'append')
+	}
+
 	#fill() {
 		const wishProducts = this.#productsManagerService.wishList.getRuntime()
 		let reversedIndex = wishProducts.size
+		requestAnimationFrame(() => requestAnimationFrame(() => (this.element.dataset['ready'] = 'true')))
+
+		if (!reversedIndex) {
+			this.#handleNoData()
+			return
+		}
+
+		if (this.#placeholder) {
+			this.#placeholder.destroy()
+			this.#placeholder = null
+		}
 
 		for (const product of wishProducts) {
 			const productCard = new ProductCard(product, { inactiveLink: false, draggable: false })
 			const li = new WishProductsListItemComponent()
 
 			li.mount(this.productsListEl, 'prepend')
-			li.element.style.setProperty('--index', String(reversedIndex--))
-			productCard.mount(li.element, 'append')
+			li.element!.style.setProperty('--index', String(reversedIndex--))
+			productCard.mount(li.element!, 'append')
 
 			this.#items.set(product, { productCard, li })
-			this.#productsByLiElements.set(li.element, product)
+			this.#productsByLiElements.set(li.element!, product)
 		}
-
-		requestAnimationFrame(() => requestAnimationFrame(() => (this.element.dataset['ready'] = 'true')))
 	}
 
 	render() {

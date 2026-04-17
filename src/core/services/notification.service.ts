@@ -1,5 +1,5 @@
 import { Notification, NotificationType } from '@/components/layout/notification/notification.component'
-import { SELECTOR_NOTIFICATIONS_LIST } from '@/constants/selectors.constants'
+import { SELECTOR_NOTIFICATION_LIST } from '@/constants/selectors.constants'
 import { DragEndEvent, DragStartEvent } from '@/core/services/drag.types.ts'
 import { Singleton } from '@/utils/singleton'
 
@@ -24,7 +24,7 @@ export class NotificationService extends Singleton {
 	}
 
 	#getContainer() {
-		return (this.#container ??= document.querySelector(SELECTOR_NOTIFICATIONS_LIST)!)
+		return (this.#container ??= document.querySelector(SELECTOR_NOTIFICATION_LIST)!)
 	}
 
 	#showNotif(notif: Notification) {
@@ -36,13 +36,14 @@ export class NotificationService extends Singleton {
 	}
 
 	#setNotifTimeout(notif: Notification) {
-		notif.timeout = setTimeout(() => this.#destroyNotif(notif), 300000)
+		notif.timeout = setTimeout(() => this.#destroyNotif(notif), 3000)
 	}
 
 	#destroyNotif(notif: Notification) {
-		if (!notif.timeout) return
-
-		clearTimeout(notif.timeout)
+		if (notif.timeout != undefined) {
+			clearTimeout(notif.timeout)
+			notif.timeout = null
+		}
 		notif.destroy()
 	}
 
@@ -58,10 +59,10 @@ export class NotificationService extends Singleton {
 	}
 
 	#handleDragstart = (e: DragStartEvent<Notification>) => {
-		if (!e.detail.instance.timeout) return
-
-		clearTimeout(e.detail.instance.timeout)
-		e.detail.instance.timeout = null
+		if (e.detail.instance.timeout != undefined) {
+			clearTimeout(e.detail.instance.timeout)
+			e.detail.instance.timeout = null
+		}
 	}
 
 	#handleDragend = (e: DragEndEvent<Notification, 'y'>) => {

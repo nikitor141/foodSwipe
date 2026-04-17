@@ -12,12 +12,13 @@ import { Singleton } from '@/utils/singleton.ts'
 export interface ProductsManagerEvents {
 	'products-active-add': { product: Product; direction?: DragEndEvent['detail']['direction'] }
 	'products-active-delete': { product: Product; direction?: DragEndEvent['detail']['direction'] }
+	'products-response-zero-products': null
 	'category-excluded': number
 	'subcategory-excluded': number
 	'category-included': number
 	'subcategory-included': number
 	'products-manager-ready': boolean
-	'wish-list-cleared': void
+	'wish-list-cleared': null
 	'wish-list-removed': { product: Product }
 }
 
@@ -205,7 +206,7 @@ export class ProductsManagerService extends Singleton {
 		return this.#ready
 	}
 
-	swipe(product: Product, direction: DragEndEvent['detail']['direction']) {
+	swipe(product: Product, direction: DragEndEvent<this, 'x'>['detail']['direction']) {
 		if (direction.x === 'left') {
 			this.excluded.excludeProduct(product)
 		}
@@ -219,7 +220,7 @@ export class ProductsManagerService extends Singleton {
 		this.#ensureActiveFilled()
 	}
 
-	#mutateActive(prop: 'add' | 'delete', product: Product, direction?: DragEndEvent['detail']['direction']) {
+	#mutateActive(prop: 'add' | 'delete', product: Product, direction?: DragEndEvent<this, 'x'>['detail']['direction']) {
 		this.#active[prop](product)
 		this.#notify(`products-active-${prop}`, { product, direction })
 	}
@@ -279,24 +280,32 @@ export class ProductsManagerService extends Singleton {
 	}
 
 	async #requestProducts() {
-		//todo ебатека с типом?
+		//todo бред с типом?
 		try {
 			const countToFill = this.#batchSize - this.#queue.size
 			if (!countToFill) return []
 
-			return await this.productsFetcherService.getRandomProducts(countToFill, this.excluded.getForApi())
-		} catch (err) {
-			this.notificationService.show(err.message ?? 'Ошибка загрузки', 'negative')
+			const products = await this.productsFetcherService.getRandomProducts(countToFill, this.excluded.getForApi())
+
+			if (!products.length) {
+				this.notificationService.show('Товары закончились. Загляните в фильтры!', 'neutral')
+				this.#notify('products-response-zero-products', null)
+			}
+
+			return products
+		} catch {
+			this.notificationService.show('Ошибка загрузки продуктов', 'negative')
 			return []
 		}
 	}
 
 	async #requestWishProducts() {
+		//todo бред с типом?
 		try {
 			const promises = this.store.state.wishList.map(id => this.productsFetcherService.getProductById(id))
 			return await Promise.all(promises)
-		} catch (err) {
-			this.notificationService.show(err.message ?? 'Ошибка загрузки', 'negative')
+		} catch {
+			this.notificationService.show('Ошибка загрузки отмеченных продуктов', 'negative')
 			return []
 		}
 	}
@@ -305,7 +314,6 @@ export class ProductsManagerService extends Singleton {
 		if (!this.#allCategories) await this.getAllCategories()
 
 		const products: Product[] = await this.#requestProducts()
-		if (!products.length) this.notificationService.show('Товары закончились. Загляните в фильтры!', 'neutral')
 		for (const product of products) {
 			if (this.#active.size < this.#activeLimit) {
 				this.#mutateActive('add', product)
@@ -338,7 +346,6 @@ export class ProductsManagerService extends Singleton {
 		this.#pending = true
 
 		const products: Product[] = await this.#requestProducts()
-		if (!products.length) this.notificationService.show('Товары закончились. Загляните в фильтры!', 'neutral')
 		for (const product of products) {
 			this.#queue.add(product)
 		}

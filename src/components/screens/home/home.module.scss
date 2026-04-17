@@ -1,0 +1,6 @@
+@use "@/styles/functions" as f;
+@use "@/styles/variables" as *;
+
+.home {
+	padding-block-end: f.rem(24);
+}

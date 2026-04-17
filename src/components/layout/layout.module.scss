@@ -10,12 +10,30 @@
 	//overflow: hidden; // не будет работать sticky
 	//overflow: clip; - будет работать. hidden - спрятать область, clip - обрезать
 	overflow-wrap: break-word;
-	$bg-options: fixed no-repeat top left / auto 100svh;
+	$bg-options: fixed no-repeat left top / auto 100svh;
 	background:
 		radial-gradient(circle at 20% 30%, f.cl($cd-positive, $a: 0.3) 0%, transparent 50%) $bg-options,
 		radial-gradient(circle at 80% 70%, f.cl($cd-negative, $a: 0.25) 0%, transparent 50%) $bg-options,
 		radial-gradient(circle at 30% 80%, f.cl($cd-accent, $a: 0.2) 0%, transparent 60%) $bg-options,
 		f.cl($cd-background) $bg-options;
+
+	@supports (font: -apple-system-body) {
+		$bg-options: no-repeat left top / cover;
+		//safari only because background-attachment: fixed; is buggy
+		&::before {
+			position: fixed;
+			inset: 0;
+			// z-index: ;
+			pointer-events: none;
+			content: "";
+			background:
+				radial-gradient(circle at 20% 30%, f.cl($cd-positive, $a: 0.3) 0%, transparent 50%) $bg-options,
+				radial-gradient(circle at 80% 70%, f.cl($cd-negative, $a: 0.25) 0%, transparent 50%) $bg-options,
+				radial-gradient(circle at 30% 80%, f.cl($cd-accent, $a: 0.2) 0%, transparent 60%) $bg-options,
+				f.cl($cd-background) $bg-options;
+			// isolation: isolate;
+		}
+	}
 }
 
 // common -------------------------------------------------
@@ -31,5 +49,7 @@
 //flex main -----------------------------------------------
 
 .content {
+	display: grid;
 	flex-grow: 1;
+	grid-template-rows: 1fr;
 }

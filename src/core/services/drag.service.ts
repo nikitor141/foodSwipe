@@ -55,7 +55,7 @@ export class DragService extends Singleton {
 
 			this.#dragSessionsFactory.newSession(element, config, e, this.#draggingElements)
 		}
-
+		element.style.touchAction = 'none'
 		element.addEventListener('pointerdown', handler, { passive: true })
 		this.#pointerDownByAttachedElements.set(element, handler)
 	}

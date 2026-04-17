@@ -56,3 +56,12 @@
 		transform: rotate(0);
 	}
 }
+
+@keyframes jumping {
+	0% {
+		transform: translateY(-2.5%);
+	}
+	100% {
+		transform: translateY(2.5%);
+	}
+}
