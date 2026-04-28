@@ -42,6 +42,11 @@ FoodSwipe — это веб-приложение в формате Tinder-под
 
 ---
 
+## Backend and deploy
+
+- supabase, rest api
+- netlify
+
 ## Сводка архитектуры
 
 _подробности в architecture.md_
