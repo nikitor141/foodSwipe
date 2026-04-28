@@ -1,31 +1,109 @@
-# Vite Vanilla JS Template
+**_WIP_**
+
+# FoodWishSwipe
+
+FoodSwipe — это веб-приложение в формате Tinder-подобного интерфейса для выбора продуктов из супермаркета. Пользователь свайпает карточки товаров: вправо — добавить в вишлист, влево — скрыть из подборки. Есть возможность фильтрации. Приложение помогает быстро принимать решения о покупках без перегрузки списками категорий и фильтров.
+
+Проект написан на vanilla JavaScript без фреймворков и демонстрирует архитектурный подход к построению SPA-приложения с собственным роутингом, состоянием и работой с API.
+
+---
+
+## Демо
+
+> https://foodwishswipe.netlify.app/
+
+---
+
+## Особенности
+
+- карточки товаров со свайп-интерфейсом
+- лайк / дизлайк товаров
+- список выбранных товаров
+- собственный клиентский роутинг (без библиотек)
+- обработка отсутствующих маршрутов
+- работа с History API
+- загрузка данных из внешнего источника
+- хранение состояния пользователя
+- SPA-архитектура без React / Vue
+
+---
+
+## Tech Stack
+
+- HTML
+- SCSS (scss modules)
+- Vanilla JavaScript (ES Modules, TypeScript)
+
+Инструменты:
+
+- vite plus
+- oxlint
+- oxfmt
+
+---
+
+## Сводка архитектуры
+
+_подробности в architecture.md_
+
+Проект реализует SPA без использования фреймворков:
+
+- собственный роутер
+- управление состоянием приложения
+- модульная структура ESModules
+- разделение service / ui / routing логики
+- клиентская обработка ошибок маршрутизации
+- работа с асинхронной загрузкой данных
+
+Цель проекта — показать понимание основ фронтенд-архитектуры без abstraction-layer библиотек.
+
+---
+
+## Как это работает
+
+1. приложение загружает список товаров и список категорий для фильтра
+2. скрытые фильтром категории не доступны в выдаче
+3. показывает карточку случайного товара
+4. пользователь свайпает:
+   - вправо → товар сохраняется
+   - влево → товар скрывается
+5. скрытые товары исключаются из выдачи
+6. выбранные товары доступны в отдельном списке
+
+---
+
+## Цели проекта
+
+Проект создан как часть портфолио и демонстрирует:
+
+- умение писать SPA без фреймворков
+- понимание клиентского роутинга
+- работу с состоянием приложения
+- модульную архитектуру
+- работу с API
+- чистую организацию кода
+
+---
+
+## Будущие улучшения
+
+- виртуализация карточек
+- PWA support
+- временный бан товаров на сутки
+
+---
 
 ## Setup
 
-1. Clone repository using this command: `git clone https://github.com/nikitor141/vite-vanilla-js-template.git`
-2. Rename the folder of project
-3. Install dependencies: `pnpm install`
-4. Remove the .git directory, README.md file and run `git init` to clean the commit history.
-5. Run the development server: `pnpm dev`
+_при использовании webstorm конфиги lint и fmt из vite.config нужно перенести в отдельные oxlint.config.ts и oxfmt.config.ts соответственно_
 
-## Build
+### Dev
 
-- Build the project: `pnpm build`
-- Preview the build: `pnpm preview`
+1. Clone repository using this command: `git clone https://github.com/nikitor141/FoodWishSwipe`
+2. Install dependencies: `vp i`
+3. Run the development server: `vp dev`
 
-## Branches
+### Build
 
-- ### main
-  - Uses:
-    - prettier
-    - eslint (js, html)
-- ### next-gen
-  - Uses:
-    - biome - formatting .js files (linter is off)
-    - prettier - for all other files
-    - oxlint - .js
-
-- ### now
-  - Uses:
-    - oxlint - .ts,.js
-    - oxfmt - .ts,.js,.html,.scss,.css
+- Build the project: `vp build`
+- Preview the build: `vp preview`
